@@ -21,3 +21,8 @@ venv/
 
 # OS
 .DS_Store
+
+# Testing-only artifacts (mock construction must never be committed as frozen)
+artifacts/**/rewrites_cache.mock.json
+artifacts/runs/*mock*.jsonl
+artifacts/runs/*smoke*.jsonl
