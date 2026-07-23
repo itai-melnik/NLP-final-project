@@ -41,7 +41,7 @@ cp .env.example .env   # fill in API keys (only needed for real Stage-2 runs)
 ## Running the pipeline
 
 ```bash
-# Stage 0 — frozen PR selection (n=41). Deterministic; re-run is byte-identical.
+# Stage 0 — frozen PR selection (n=40). Deterministic; re-run is byte-identical.
 python scripts/00_build_selection.py
 
 # Stage 1 — build the 9 variants per PR + invariance report. Fails loudly on
@@ -51,7 +51,7 @@ python scripts/01_build_variants.py
 # Stage 2 — judging. Resumable; keyed per cell; pilot runs never mix with final.
 python scripts/02_run_judges.py --mock --run-name smoke        # no spend, tests keying/resume
 python scripts/02_run_judges.py --dry-run                      # ~$0.10, real APIs, schema check
-python scripts/02_run_judges.py --run-name results_v1          # full 3,321-call battery
+python scripts/02_run_judges.py --run-name results_v1          # full 3,240-call battery
 
 # Stage 3 — analysis
 jupyter notebook notebooks/20_analysis.ipynb

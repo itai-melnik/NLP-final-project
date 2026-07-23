@@ -100,7 +100,7 @@ judging:
       temperature: null
       env_key: OPEN_JUDGE_API_KEY
 
-  # Final full-matrix run spec (41 PRs x 9 variants x 3 judges x 3 trials = 3,321).
+  # Final full-matrix run spec (40 PRs x 9 variants x 3 judges x 3 trials = 3,240).
   final_run_name: results_v1
 
 # ---------------------------------------------------------------------------
