@@ -46,7 +46,6 @@
       "n_test_files": 1,
       "pr_number": 4846,
       "repo": "livekit/agents",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "agents__4846"
     },
@@ -60,7 +59,6 @@
       "n_test_files": 4,
       "pr_number": 20099,
       "repo": "Chia-Network/chia-blockchain",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "chia-blockchain__20099"
     },
@@ -74,7 +72,6 @@
       "n_test_files": 1,
       "pr_number": 4359,
       "repo": "coreos/coreos-assembler",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "coreos-assembler__4359"
     },
@@ -88,7 +85,6 @@
       "n_test_files": 1,
       "pr_number": 12106,
       "repo": "dask/dask",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "dask__12106"
     },
@@ -102,7 +98,6 @@
       "n_test_files": 2,
       "pr_number": 12144,
       "repo": "dask/dask",
-      "requested_change_count": null,
       "short_desc": true,
       "task_id": "dask__12144"
     },
@@ -116,7 +111,6 @@
       "n_test_files": 1,
       "pr_number": 12221,
       "repo": "dask/dask",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "dask__12221"
     },
@@ -130,7 +124,6 @@
       "n_test_files": 2,
       "pr_number": 4601,
       "repo": "deepchem/deepchem",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "deepchem__4601"
     },
@@ -144,7 +137,6 @@
       "n_test_files": 2,
       "pr_number": 6248,
       "repo": "espnet/espnet",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "espnet__6248"
     },
@@ -158,7 +150,6 @@
       "n_test_files": 1,
       "pr_number": 2540,
       "repo": "falconry/falcon",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "falcon__2540"
     },
@@ -172,7 +163,6 @@
       "n_test_files": 3,
       "pr_number": 2572,
       "repo": "falconry/falcon",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "falcon__2572"
     },
@@ -186,7 +176,6 @@
       "n_test_files": 1,
       "pr_number": 2581,
       "repo": "falconry/falcon",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "falcon__2581"
     },
@@ -200,7 +189,6 @@
       "n_test_files": 1,
       "pr_number": 1261,
       "repo": "sissbruecker/linkding",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "linkding__1261"
     },
@@ -214,7 +202,6 @@
       "n_test_files": 1,
       "pr_number": 2188,
       "repo": "Lightning-AI/litgpt",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "litgpt__2188"
     },
@@ -228,7 +215,6 @@
       "n_test_files": 1,
       "pr_number": 1517,
       "repo": "dbcli/mycli",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "mycli__1517"
     },
@@ -242,7 +228,6 @@
       "n_test_files": 1,
       "pr_number": 11676,
       "repo": "projectnessie/nessie",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "nessie__11676"
     },
@@ -256,7 +241,6 @@
       "n_test_files": 1,
       "pr_number": 10276,
       "repo": "numba/numba",
-      "requested_change_count": null,
       "short_desc": true,
       "task_id": "numba__10276"
     },
@@ -270,7 +254,6 @@
       "n_test_files": 1,
       "pr_number": 10366,
       "repo": "numba/numba",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "numba__10366"
     },
@@ -284,7 +267,6 @@
       "n_test_files": 2,
       "pr_number": 1906,
       "repo": "openbao/openbao",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "openbao__1906"
     },
@@ -298,7 +280,6 @@
       "n_test_files": 2,
       "pr_number": 2735,
       "repo": "pipecat-ai/pipecat",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "pipecat__2735"
     },
@@ -312,7 +293,6 @@
       "n_test_files": 1,
       "pr_number": 630,
       "repo": "bufbuild/protocompile",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "protocompile__630"
     },
@@ -326,7 +306,6 @@
       "n_test_files": 2,
       "pr_number": 645,
       "repo": "bufbuild/protocompile",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "protocompile__645"
     },
@@ -340,7 +319,6 @@
       "n_test_files": 1,
       "pr_number": 9606,
       "repo": "prowler-cloud/prowler",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "prowler__9606"
     },
@@ -354,7 +332,6 @@
       "n_test_files": 2,
       "pr_number": 9702,
       "repo": "prowler-cloud/prowler",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "prowler__9702"
     },
@@ -368,7 +345,6 @@
       "n_test_files": 3,
       "pr_number": 9718,
       "repo": "prowler-cloud/prowler",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "prowler__9718"
     },
@@ -382,7 +358,6 @@
       "n_test_files": 1,
       "pr_number": 9865,
       "repo": "prowler-cloud/prowler",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "prowler__9865"
     },
@@ -396,7 +371,6 @@
       "n_test_files": 2,
       "pr_number": 8845,
       "repo": "qutebrowser/qutebrowser",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "qutebrowser__8845"
     },
@@ -410,7 +384,6 @@
       "n_test_files": 1,
       "pr_number": 996,
       "repo": "envoyproxy/ratelimit",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "ratelimit__996"
     },
@@ -424,7 +397,6 @@
       "n_test_files": 6,
       "pr_number": 3949,
       "repo": "redis/redis-py",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "redis-py__3949"
     },
@@ -438,7 +410,6 @@
       "n_test_files": 8,
       "pr_number": 7499,
       "repo": "sqlfluff/sqlfluff",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "sqlfluff__7499"
     },
@@ -452,7 +423,6 @@
       "n_test_files": 1,
       "pr_number": 8953,
       "repo": "stylelint/stylelint",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "stylelint__8953"
     },
@@ -466,7 +436,6 @@
       "n_test_files": 1,
       "pr_number": 8985,
       "repo": "stylelint/stylelint",
-      "requested_change_count": null,
       "short_desc": true,
       "task_id": "stylelint__8985"
     },
@@ -480,7 +449,6 @@
       "n_test_files": 1,
       "pr_number": 9026,
       "repo": "stylelint/stylelint",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "stylelint__9026"
     },
@@ -494,7 +462,6 @@
       "n_test_files": 1,
       "pr_number": 9062,
       "repo": "stylelint/stylelint",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "stylelint__9062"
     },
@@ -508,7 +475,6 @@
       "n_test_files": 1,
       "pr_number": 4219,
       "repo": "vega/vega",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "vega__4219"
     },
@@ -522,7 +488,6 @@
       "n_test_files": 2,
       "pr_number": 9152,
       "repo": "vitest-dev/vitest",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "vitest__9152"
     },
@@ -536,7 +501,6 @@
       "n_test_files": 1,
       "pr_number": 9512,
       "repo": "vitest-dev/vitest",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "vitest__9512"
     },
@@ -550,7 +514,6 @@
       "n_test_files": 4,
       "pr_number": 9521,
       "repo": "vitest-dev/vitest",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "vitest__9521"
     },
@@ -564,7 +527,6 @@
       "n_test_files": 3,
       "pr_number": 1245,
       "repo": "wakatime/wakatime-cli",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "wakatime-cli__1245"
     },
@@ -578,7 +540,6 @@
       "n_test_files": 1,
       "pr_number": 5578,
       "repo": "colinhacks/zod",
-      "requested_change_count": null,
       "short_desc": true,
       "task_id": "zod__5578"
     },
@@ -592,7 +553,6 @@
       "n_test_files": 1,
       "pr_number": 5672,
       "repo": "colinhacks/zod",
-      "requested_change_count": null,
       "short_desc": false,
       "task_id": "zod__5672"
     }

@@ -11,7 +11,6 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Iterable
 
 from .config import Config
@@ -157,7 +156,6 @@ def pr_metadata_snapshot(rec: dict[str, Any], config: Config) -> dict[str, Any]:
         "language": rec.get("language"),
         "difficulty": rec.get("difficulty"),
         "has_requested_changes": rec.get("has_requested_changes"),
-        "requested_change_count": rec.get("requested_change_count"),
         "description_chars": len(desc),
         "diff_chars": len(rec.get("diff_patch") or ""),
         "n_files": len(files),
