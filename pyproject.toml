@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prjudge"
+version = "0.1.0"
+description = "Judge-bias experimental pipeline: non-semantic sensitivity in LLM judges of pull requests"
+requires-python = ">=3.12"
+readme = "README.md"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+prjudge = ["py.typed"]

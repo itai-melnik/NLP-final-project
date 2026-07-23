@@ -1,0 +1,113 @@
+# Judge-bias experimental pipeline — single source of truth for paths, seeds,
+# filters, model ids, and versions. Every stage reads this; every frozen
+# artifact records the config hash it was built under (see §7 of the spec).
+
+# ---------------------------------------------------------------------------
+# Paths (relative to repo root)
+# ---------------------------------------------------------------------------
+paths:
+  dataset_dir: swe-prbench/dataset
+  prs_jsonl: swe-prbench/dataset/prs.jsonl
+  eval_100: swe-prbench/dataset/evals/eval_100.json
+  annotations_dir: swe-prbench/dataset/annotations
+  artifacts_dir: artifacts
+
+# ---------------------------------------------------------------------------
+# Global reproducibility
+# ---------------------------------------------------------------------------
+seed: 20260723           # master seed; per-task seeds derived from (seed, task_id)
+
+# ---------------------------------------------------------------------------
+# Stage 0 — selection (spec §3)
+# ---------------------------------------------------------------------------
+selection:
+  min_description_chars: 20        # after strip()
+  max_diff_chars: 30000            # ~7.5k tokens
+  min_file_sections: 2             # >= 2 files in the diff
+  require_test_nontest_mix: true   # both a test file and a non-test file present
+  short_description_chars: 150     # PRs below this get short_desc flag (verbosity sensitivity)
+  # AI/bot-authorship screen (spec §3 filter 4): identified during design,
+  # applied as an explicit drop-list so selection is fully deterministic.
+  drop_list:
+    - chia-blockchain__20321
+    - openbao__2307
+    - pipecat__3692
+
+# ---------------------------------------------------------------------------
+# Stage 1 — variant construction (spec §4)
+# ---------------------------------------------------------------------------
+variants:
+  # The 9-variant matrix is fixed in code (src/prjudge/variants.py); listed
+  # here for reference / run-selection filtering.
+  ids:
+    - baseline
+    - verb_terse
+    - verb_pad2x
+    - verb_pad4x
+    - repo_masked
+    - origin_claude
+    - origin_gpt
+    - order_rev
+    - placebo
+  repo_mask_token: "project/repo"
+  origin_claude_trailer: "Co-Authored-By: Claude <noreply@anthropic.com>"
+  origin_gpt_trailer: "Co-Authored-By: Copilot <copilot@users.noreply.github.com>"
+  placebo_pr_number: 99999
+  placebo_date: "2020-01-01T00:00:00Z"
+  # Verbosity target token ratios vs baseline description, with ±tolerance (§4.2).
+  verbosity_targets:
+    verb_terse: 0.5
+    verb_pad2x: 2.0
+    verb_pad4x: 4.0
+  verbosity_tolerance: 0.20        # ±20% band on the target ratio
+
+  # Construction model for the LLM-assisted verbosity rewrites — PINNED and
+  # SEPARATE from the judges so a judge never scores its own rewrite.
+  construction_model:
+    provider: anthropic
+    model: claude-sonnet-5         # TO-PIN before Stage-1 freeze
+    temperature: 0.3
+    max_tokens: 4096
+
+# ---------------------------------------------------------------------------
+# Stage 2 — judging (spec §5)
+# ---------------------------------------------------------------------------
+judging:
+  trials: 3                        # per cell, at provider-default temperature
+  prompt_version: v1               # which frozen system prompt to use (see prompts.py)
+  max_output_tokens: 2048
+  max_retries: 6
+  retry_base_delay: 2.0            # seconds; exponential backoff
+
+  # The three judges. Model ids are TO-PIN placeholders — set the exact version
+  # strings right before the real run, then commit. temperature: null = use the
+  # provider default (required for the run-to-run consistency metric to be meaningful).
+  judges:
+    - name: claude                 # Claude-family frontier judge
+      provider: anthropic
+      model: claude-opus-4-8       # TO-PIN
+      temperature: null
+      env_key: ANTHROPIC_API_KEY
+    - name: gpt                    # GPT-family frontier judge
+      provider: openai
+      model: gpt-5                 # TO-PIN
+      temperature: null
+      env_key: OPENAI_API_KEY
+    - name: open                   # open-source neutral judge via hosted API
+      provider: openai_compatible  # OpenAI-compatible endpoint (Together/Fireworks/Groq)
+      model: meta-llama/Llama-3.3-70B-Instruct-Turbo  # TO-PIN
+      base_url: https://api.together.xyz/v1           # TO-PIN
+      temperature: null
+      env_key: OPEN_JUDGE_API_KEY
+
+  # Final full-matrix run spec (41 PRs x 9 variants x 3 judges x 3 trials = 3,321).
+  final_run_name: results_v1
+
+# ---------------------------------------------------------------------------
+# Versions stamped into artifacts (bump on any breaking change)
+# ---------------------------------------------------------------------------
+versions:
+  selection: v1
+  variants: v1
+  prompt: v1
+  results: v1
