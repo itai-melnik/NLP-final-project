@@ -66,11 +66,21 @@ Filters (all verified on the actual data):
    authorship claim." (One of these also had zero review comments — no ground
    truth.) See the limitation note below.
 
-Result: **n = 41** — all eligible PRs are used; no random sampling step.
-Verified composition: difficulty 12 Direct / 16 Contextual / 13 Latent;
-26 distinct repos (max 4 per repo); languages 24 Py / 6 Go / 5 JS / 5 TS / 1 Java;
-`has_requested_changes` 14 true / 27 false; judge input 524–8,347 est. tokens
-(median ~2,500). Total calls: 41 × 9 × 3 × 3 = **3,321**.
+Result: **n = 40** — all eligible PRs are used; no random sampling step.
+Verified composition: difficulty 12 Direct / 15 Contextual / 13 Latent;
+25 distinct repos (max 4 per repo); languages 23 Py / 6 Go / 5 JS / 5 TS / 1 Java;
+`has_requested_changes` 13 true / 27 false; judge input 524–8,347 est. tokens
+(median ~2,500). Total calls: 40 × 9 × 3 × 3 = **3,240**.
+
+**Test-file detection note (implementation).** Filter 3 requires a genuine
+test/non-test mix. An earlier count of n = 41 was produced with a loose detector
+that treated the substring `spec` anywhere in a filename as a test signal; this
+false-positived on `spyder__24990`'s `.../kernelspec.py` (a config file, not a
+test), admitting a PR with no real test file. We use principled test-file
+detection instead (test/spec as a path *token* — directory or basename pattern,
+not an incidental substring), which correctly excludes `spyder__24990`, giving
+n = 40. This keeps the tests-position contrast (§6) well-defined for every
+selected PR.
 
 Four PRs have very short descriptions (< 150 chars), which compresses the
 verbosity axis for them (terse ≈ baseline). They are kept (they are legitimate
@@ -216,7 +226,7 @@ limitations.
   token counts, model version, timestamp. Call order shuffled across conditions so
   provider drift cannot correlate with any axis. Crash/rate-limit safe by
   construction.
-- **Scale/cost:** 41 PRs × 9 variants × 3 judges × 3 trials = **3,321 calls** at
+- **Scale/cost:** 40 PRs × 9 variants × 3 judges × 3 trials = **3,240 calls** at
   ~1–8k input tokens — roughly $10–30 total; runs overnight on a laptop.
 
 **Artifact:** `results_v1.jsonl` (append-only, never edited).
@@ -299,7 +309,7 @@ Any number in the paper is regenerable from artifacts.
 | Author persona / typos axes | Dropped from v1 | Scope control |
 | Origin levels | Claude trailer + GPT trailer + none | Both trailers kept to preserve the identified self-preference 2×2; realistic `Co-Authored-By` format matches actual coding-agent output |
 | File-order manipulation | Uniform seeded reversal; tests-position contrast pool-wide | Selection requires mixed test/non-test files, so the contrast is defined for every selected PR |
-| Selection pool | eval_100, all 41 eligible PRs (no sampling) | Documented provenance from the paper's curated split; filters already consume the margin a random-sampling step would need; 142 additional eligible PRs exist in the full 350 as a pre-registered extension pool if more power is needed |
+| Selection pool | eval_100, all 40 eligible PRs (no sampling) | Documented provenance from the paper's curated split; filters already consume the margin a random-sampling step would need; 142 additional eligible PRs exist in the full 350 as a pre-registered extension pool if more power is needed |
 | AI-authored PRs | Screened out via description disclosure scan (e.g., "🤖 Generated with Claude Code") | Pre-existing authorship disclosures contaminate the origin axis baseline ("no claim"); recorded as a limitation — the origin axis measures the label effect on human-authored code |
 | Short-description PRs (<150 chars) | Kept, flagged; sensitivity check in verbosity analysis | Legitimate real PRs; verbosity axis compressed for them but other axes unaffected |
 | Combos | Deferred to v2 with pre-committed selection rule | Informative combos depend on main effects; pre-committed rule avoids forking-paths critique |
