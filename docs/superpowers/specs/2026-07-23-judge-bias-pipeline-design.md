@@ -103,9 +103,9 @@ heavy bot review activity, so the dataset skews human throughout.)
 | # | Variant id | Axis | Construction | Deterministic? |
 |---|-----------|------|--------------|----------------|
 | 1 | `baseline` | — | original description verbatim, natural file order, real repo name, no authorship trailer | yes |
-| 2 | `verb_terse` | verbosity | LLM rewrite: compress description to 1–2 sentences, zero information removed beyond redundancy | no |
-| 3 | `verb_pad2x` | verbosity | LLM rewrite: ~2× word count, zero information added | no |
-| 4 | `verb_pad4x` | verbosity | LLM rewrite: ~4× word count, zero information added | no |
+| 2 | `verb_terse` | verbosity | Claude Code rewrite (skill `cc-v1`, §4.5): compress description to 1–2 sentences, zero information removed beyond redundancy | no |
+| 3 | `verb_pad2x` | verbosity | Claude Code rewrite (skill `cc-v1`, §4.5): ~2× word count, zero information added | no |
+| 4 | `verb_pad4x` | verbosity | Claude Code rewrite (skill `cc-v1`, §4.5): ~4× word count, zero information added | no |
 | 5 | `repo_masked` | prestige / memorization | script: replace repo name/org in metadata line and description with `project/repo`; diff untouched | yes |
 | 6 | `origin_claude` | model-of-origin | script: append trailer `Co-Authored-By: Claude <noreply@anthropic.com>` | yes |
 | 7 | `origin_gpt` | model-of-origin | script: append equivalent GPT-family trailer (Codex/Copilot style) | yes |
@@ -146,6 +146,29 @@ after the main run, construct combo variants from the two axes with the largest
 median |Δscore|, and test for super-/sub-additivity against the sum of the individual
 effects. Combos ship as `variants_v2`, judged under the identical frozen prompt;
 the append-only runner (§5) makes this a pure addition, no re-runs.
+
+### 4.5 Rewrite construction: Claude Code skill (no API)
+
+The three verbosity rewrites are authored by **Claude (Opus 4.8, high reasoning)
+running in Claude Code**, following the frozen rule set `cc-v1` in
+`.claude/skills/rewrite-variants/SKILL.md` — the same semantic-invariance rules
+as the v1 API prompt, with tool-verified word counts. Interface: script 01
+emits `rewrites_pending.json` (work queue with precomputed cache keys and
+word-count bands) for any missing rewrite; the skill fills
+`rewrites_cache.json`; script 01 re-runs to verify (§4.2 checks unchanged) and
+freeze. Provenance (`model`, `prompt_version: cc-v1`, `method:
+claude-code-skill`) is recorded per rewrite in the cache and in each variant's
+construction metadata. The rewrites are regenerable through the same interface
+by any other construction model (the cache is the drop-in boundary).
+
+**Limitation (record in paper):** the construction model is Claude-family — the
+same family as the Claude judge. Verbosity rewrites may therefore carry a
+Claude stylistic fingerprint that interacts with self-preference for that judge.
+Consequence for analysis (§6): the style-constant **dose–response among the
+three rewrites** (terse → 2× → 4×, all same-styled) is the primary verbosity
+contrast; variant-vs-baseline Δ additionally conflates length with
+rewrite-style and is reported as secondary. The spot-check gate (§4.2) is
+unchanged and remains human-performed.
 
 **Frozen artifact:** `variants_v1/` — one JSON per (task_id, variant) containing the
 fully assembled judge input fields + construction metadata (rewrite model, seeds,
@@ -274,8 +297,10 @@ never uses human data.
   per cell); every reported flip rate and Δ is compared against it. The
   `placebo` axis must show ≈ 0 effect — if it doesn't, the noise model is wrong
   and results are not reported until resolved.
-- **Verbosity:** test monotonic trend in the aggregate score across
-  terse/baseline/2×/4×.
+- **Verbosity:** test monotonic trend in the aggregate score. Primary contrast:
+  terse → 2× → 4× (style-constant, all construction-model-rewritten, §4.5);
+  secondary: against the human-styled baseline (conflates length with
+  rewrite-style).
 - **Self-preference:** 2×2 claimed-family × judge-family; the interaction term is the
   self-preference estimate; open judge as neutral control.
 - **File order / tests position:** every selected PR mixes test and non-test
@@ -319,6 +344,7 @@ Any number in the paper is regenerable from artifacts.
 | Human comparison | Validity anchor + 2D judge characterization, not a target metric | Bias (robustness) and accuracy (validity) are orthogonal; consistent-but-invalid judges are vacuously stable, and the quadrant placement is itself a result |
 | Issue matching | v1 secondary analysis | `file`/`line`/`diff_hunk` in annotations make location matching scriptable; adds detection-shift mechanism evidence |
 | Debiasing instructions in prompt | Excluded | We measure default deployed behavior; a debiasing-instruction arm is future work |
+| Rewrite construction | Claude Code skill (Opus 4.8, rule set cc-v1), no API | Zero marginal cost on subscription; validity is enforced by the unchanged §4.2 invariance checks + human spot-check, not by the generator; cache interface keeps rewrites regenerable by any model. Limitation: construction model shares the Claude judge's family (§4.5) — style-constant rewrite-only dose-response is the primary verbosity contrast |
 
 ## 9. Future work (out of scope for v1)
 

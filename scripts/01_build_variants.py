@@ -6,10 +6,17 @@ input, runs the per-axis invariance checks, and freezes the results. Refuses to
 freeze (exit 1) if any blocking invariance check fails.
 
 Deterministic variants are pure functions of the input. The three verbosity
-variants call the construction model once and cache the result, so re-runs are
-byte-identical unless --regenerate is passed.
+variants resolve through rewrites_cache.json so re-runs are byte-identical
+unless --regenerate is passed. How a cache miss is filled depends on the
+construction provider (config: variants.construction_model):
 
-    python scripts/01_build_variants.py                 # real construction model
+* provider "claude-code" (no API): misses are written to rewrites_pending.json
+  as a work queue and the script exits 1; the rewrite-variants skill
+  (.claude/skills/rewrite-variants/SKILL.md) consumes the queue, fills the
+  cache, and this script is re-run to verify and freeze.
+* provider "anthropic": misses are generated via the API construction model.
+
+    python scripts/01_build_variants.py                 # queue misses / build+freeze
     python scripts/01_build_variants.py --mock-construction   # offline, fake rewrites
     python scripts/01_build_variants.py --regenerate    # ignore the rewrite cache
 """
@@ -67,8 +74,11 @@ def main() -> int:
 
     config = load_config(args.config)
     version = config["versions"]["variants"]
-    prompt_version = "v1"
     cm = config["variants"]["construction_model"]
+    claude_code = cm["provider"] == "claude-code"
+    # The rewrite protocol version: "v1" is the API prompt in prompts.py;
+    # "cc-v1" is the frozen rule set in .claude/skills/rewrite-variants/SKILL.md.
+    prompt_version = "cc-v1" if claude_code else "v1"
 
     # -- inputs ------------------------------------------------------------
     manifest_path = config.artifacts_dir / f"selection_manifest_{config['versions']['selection']}.json"
@@ -90,6 +100,50 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     cache_path = out_dir / ("rewrites_cache.mock.json" if args.mock_construction else "rewrites_cache.json")
     cache = {} if args.regenerate else _load_cache(cache_path)
+
+    # -- claude-code work queue (pre-pass) ---------------------------------
+    # With the claude-code provider there is no API to call: every rewrite must
+    # already be in the cache. Missing ones are emitted as a work queue for the
+    # rewrite-variants skill, and the build stops before writing anything.
+    pending_path = out_dir / "rewrites_pending.json"
+    if claude_code and not args.mock_construction:
+        tol = config["variants"]["verbosity_tolerance"]
+        pending = []
+        for task_id in sorted(task_ids):
+            base = base_fields(records[task_id])
+            n_words = len(base.description.split())
+            for vid in VERBOSITY_VARIANTS:
+                ck = rewrite_cache_key(task_id, vid, prompt_version, cm["model"])
+                if ck in cache:
+                    continue
+                target = config["variants"]["verbosity_targets"][vid]
+                pending.append({
+                    "cache_key": ck,
+                    "task_id": task_id,
+                    "variant": vid,
+                    "model": cm["model"],
+                    "prompt_version": prompt_version,
+                    "n_words": n_words,
+                    "target_ratio": target,
+                    "target_words": max(1, round(n_words * target)),
+                    "word_band": [round(n_words * target * (1 - tol)),
+                                  round(n_words * target * (1 + tol))],
+                    "short_desc": bool(short_desc.get(task_id, False)),
+                    "baseline_description": base.description,
+                })
+        if pending:
+            with open(pending_path, "w", encoding="utf-8") as f:
+                json.dump({"cache_path": str(cache_path), "n_pending": len(pending),
+                           "items": pending}, f, indent=2, ensure_ascii=False)
+                f.write("\n")
+            print(f"{len(pending)} rewrites missing from {cache_path.name}.")
+            print(f"Work queue written: {pending_path}")
+            print("Fill it with the rewrite-variants skill "
+                  "(.claude/skills/rewrite-variants/SKILL.md), then re-run this script.")
+            return 1
+        # Queue fully consumed — remove the stale queue file so it cannot mislead.
+        if pending_path.exists():
+            pending_path.unlink()
 
     # -- build -------------------------------------------------------------
     all_checks: list[dict] = []

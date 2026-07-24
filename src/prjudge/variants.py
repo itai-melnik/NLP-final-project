@@ -225,6 +225,16 @@ def generate_rewrite(
         return _mock_rewrite(description, target)
 
     cm = config["variants"]["construction_model"]
+    if cm["provider"] == "claude-code":
+        # Rewrites for this provider are authored interactively via the
+        # rewrite-variants skill and pre-populated into rewrites_cache.json;
+        # a cache miss must surface as a work-queue item, never an API call.
+        raise ValueError(
+            "construction provider is 'claude-code': rewrites must be pre-populated "
+            "in rewrites_cache.json via the rewrite-variants skill (see "
+            ".claude/skills/rewrite-variants/SKILL.md); run scripts/01_build_variants.py "
+            "to (re)generate the pending work queue"
+        )
     system, user = build_rewrite_messages(description, variant, target, version="v1")
     if cm["provider"] != "anthropic":
         raise ValueError(f"unsupported construction provider: {cm['provider']}")

@@ -61,13 +61,17 @@ variants:
     verb_pad4x: 4.0
   verbosity_tolerance: 0.20        # ±20% band on the target ratio
 
-  # Construction model for the LLM-assisted verbosity rewrites — PINNED and
-  # SEPARATE from the judges so a judge never scores its own rewrite.
+  # Construction method for the LLM-assisted verbosity rewrites.
+  # provider "claude-code": rewrites are authored interactively in Claude Code
+  # via the rewrite-variants skill (frozen rule set cc-v1, no API spend); script
+  # 01 emits a rewrites_pending.json work queue for cache misses and re-verifies
+  # on re-run. LIMITATION (spec §4.5): the construction model is Claude-family —
+  # the same family as the "claude" judge — so verbosity rewrites carry a Claude
+  # stylistic fingerprint that may interact with self-preference for that judge.
   construction_model:
-    provider: anthropic
-    model: claude-sonnet-5         # TO-PIN before Stage-1 freeze
-    temperature: 0.3
-    max_tokens: 4096
+    provider: claude-code
+    model: claude-opus-4-8         # Opus 4.8, high reasoning (recorded in provenance)
+    method: rewrite-variants-skill # .claude/skills/rewrite-variants/SKILL.md
 
 # ---------------------------------------------------------------------------
 # Stage 2 — judging (spec §5)
