@@ -26,3 +26,9 @@ venv/
 artifacts/**/rewrites_cache.mock.json
 artifacts/runs/*mock*.jsonl
 artifacts/runs/*smoke*.jsonl
+
+# Batch mode: per-run submit/collect state is regenerable (safe to delete —
+# see prjudge/batch.py), and the OpenAI batch-input scratch JSONL is a
+# transient duplicate of request bodies already in the provider's Batch API.
+artifacts/runs/*.batches.json
+artifacts/runs/*_batch_scratch/
