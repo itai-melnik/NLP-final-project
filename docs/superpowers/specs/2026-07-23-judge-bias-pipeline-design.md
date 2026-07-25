@@ -70,7 +70,7 @@ Result: **n = 40** — all eligible PRs are used; no random sampling step.
 Verified composition: difficulty 12 Direct / 15 Contextual / 13 Latent;
 25 distinct repos (max 4 per repo); languages 23 Py / 6 Go / 5 JS / 5 TS / 1 Java;
 `has_requested_changes` 13 true / 27 false; judge input 524–8,347 est. tokens
-(median ~2,500). Total calls: 40 × 9 × 3 × 3 = **3,240**.
+(median ~2,500). Total calls: 40 × 9 × 2 × 3 = **2,160**.
 
 **Test-file detection note (implementation).** Filter 3 requires a genuine
 test/non-test mix. An earlier count of n = 41 was produced with a loose detector
@@ -118,7 +118,8 @@ score-vs-length trend is the target evidence, stronger than any single pairwise 
 The two origin trailers enable the **self-preference cross-design**: with judges from
 both the Claude and GPT families (§5), claimed-family × judge-family gives a 2×2 whose
 interaction term is true self-preference, separated from a general "AI-disclosure"
-or "family halo" effect. The open-source judge serves as a neutral third party.
+or "family halo" effect. (An open-source judge as an additional neutral third
+party is deferred to future work, §9.)
 
 ### 4.2 Per-axis invariance checks (run before freeze; any failure blocks it)
 
@@ -186,9 +187,11 @@ check results).
 
 ## 5. Stage 2 — Judging runs
 
-- **Judges (3):** one Claude-family frontier model, one GPT-family frontier model,
-  one open-source instruction-tuned model via a hosted API (e.g., Llama 3.3 70B on
-  Together/Fireworks/Groq). No local GPU. Pin and log exact model version strings.
+- **Judges (2), pinned 2026-07-25:** `claude-sonnet-5` (Claude family) and
+  `gpt-5.6-terra` (GPT family). Exact model version strings logged per call.
+  The Claude judge is deliberately a different model from the construction model
+  (`claude-opus-4-8`) — same family (disclosed limitation, §4.5) but not the same
+  model. An open-source judge is deferred to future work (§9).
 - **Prompt:** one fixed template for all runs, modeled on config_A's layer order
   (task/rubric → title+description → diff → metadata), with the description and
   metadata as the perturbable slots.
@@ -259,7 +262,7 @@ limitations.
   token counts, model version, timestamp. Call order shuffled across conditions so
   provider drift cannot correlate with any axis. Crash/rate-limit safe by
   construction.
-- **Scale/cost:** 40 PRs × 9 variants × 3 judges × 3 trials = **3,240 calls** at
+- **Scale/cost:** 40 PRs × 9 variants × 2 judges × 3 trials = **2,160 calls** at
   ~1–8k input tokens — roughly $10–30 total; runs overnight on a laptop.
 
 **Artifact:** `results_v1.jsonl` (append-only, never edited).
@@ -268,10 +271,9 @@ limitations.
 
 Anthropic's Message Batches API and OpenAI's Batch API each give a 50%
 discount on input+output tokens, same models, <=24h completion window. The
-final battery (3,240 calls) defaults to batch on cost grounds; the
-synchronous runner stays available for pilots, prompt tuning, dry-runs, the
-open judge (no batch API on OpenRouter/OpenAI-compatible hosts), and mop-up
-of cells that exhaust their batch resubmits. Both modes call the identical
+final battery (2,160 calls) defaults to batch on cost grounds; the
+synchronous runner stays available for pilots, prompt tuning, dry-runs, and
+mop-up of cells that exhaust their batch resubmits. Both modes call the identical
 request-construction code (`build_params` on each judge client) and write the
 identical JSONL row schema, tagged with an `api_mode` (`sync`/`batch`)
 provenance field — resume and Stage-3 analysis are mode-agnostic. `--batch`
@@ -329,7 +331,7 @@ never uses human data.
   secondary: against the human-styled baseline (conflates length with
   rewrite-style).
 - **Self-preference:** 2×2 claimed-family × judge-family; the interaction term is the
-  self-preference estimate; open judge as neutral control.
+  self-preference estimate.
 - **File order / tests position:** every selected PR mixes test and non-test
   files (§3 filter 3), so the tests-position contrast (did reversal move tests
   to the front?) is analyzable across the full pool, not a subgroup.
@@ -375,6 +377,7 @@ Any number in the paper is regenerable from artifacts.
 | Batch judging for the final run | Adopted for Claude/GPT via each provider's Batch API; open judge stays sync (no batch API) | 50% off input+output tokens, quality-identical per provider docs (same models) — pure cost saving on a 3,240-call battery; `api_mode` provenance field on every row keeps sync and batch rows indistinguishable to Stage-3 analysis; idempotent single-command "advance" step avoids a submit/poll/collect subcommand surface |
 | Terse-infeasible PRs (4) | Waiver list (`terse_waivers`), not a relaxed counting rule; their `verb_terse` cells excluded from the terse analysis arm; decided 2026-07-25, before any judging | Descriptions dominated by incompressible content (code blocks, template headings, JSON examples, URLs) cannot reach the 0.5× band without dropping facts — a counting trick (prose-only ratios) would not save the heading-dominated case and hides the issue; an explicit pre-registered list is deterministic and honest. Full matrix still runs (waived terse cells double as extra noise data) |
 | Typo preservation in rewrites | `openbao__1906` terse redone byte-identical to baseline after the original rewrite silently corrected the author's typos ("Is it save" → "is it safe") | Grammar/typo quality is an uncontrolled register perturbation the cc-v1 "keep the author's register" rule already forbids; compliance fix, no rule change, so no cc-v1 version bump or cache invalidation |
+| Judge pin (2026-07-25) | `claude-sonnet-5` + `gpt-5.6-terra`, undated aliases (open-source judge dropped from v1, deferred to future work — supersedes the "Judges (3)" row above); both at `reasoning_effort: high`; context window left at each provider's live default (Claude 1M, GPT-5.6 Terra 1.05M), recorded not requested; no dated snapshot pinned | Two judges preserve the full self-preference 2×2 (claimed-family × judge-family); the open judge was a neutral-control nice-to-have, not required by any primary analysis. Pinning Sonnet 5 (not Opus 4.8) also ensures the Claude judge is not the same model as the rewrite construction model — same family remains a disclosed limitation (§4.5). Matrix shrinks 3,240 → 2,160 calls. `reasoning_effort: high` is pinned explicitly on both judges (Sonnet 5's own default; matched onto GPT-5.6 Terra too) so the effort level is comparable across providers rather than left to divergent per-provider defaults, and is logged verbatim per row. Snapshot check on 2026-07-25 (`models.retrieve`/`models.list`, both providers) found no dated snapshot id for either model — only the undated alias exists — so the alias is pinned as-is; the runner's per-row logged `model_version` (§7) is the reproducibility record if a provider later moves the alias. Context window is not an API request parameter (no beta header, e.g. Anthropic's legacy `context-1m` header, is ever sent); the values recorded are each model's live provider-default context length (Claude: `max_input_tokens` from `models.retrieve`; GPT-5.6 Terra: published model-card context, distinct from the unrelated 272k input-token higher-usage pricing threshold) — provenance metadata only, not a choice we can or do make |
 
 ## 9. Future work (out of scope for v1)
 
@@ -384,7 +387,9 @@ class that relaxes the diff-frozen invariant), combo variants per the §4.4 rule
 a debiasing-instruction arm (does adding "ignore surface properties" to the
 system prompt reduce the measured bias?), a holistic-0–100 scoring arm (is
 checklist scoring more perturbation-robust than holistic scoring? — connects
-CheckEval to the bias literature), and per-criterion isolated calls
+CheckEval to the bias literature), an open-source judge (e.g. a hosted
+Llama-class model) as a neutral third family and frontier-vs-open comparison
+(dropped from v1 at judge-pin time, §8), and per-criterion isolated calls
 (Autorubric-style) to eliminate within-call halo effects.
 
 ## 10. Key related work (for positioning)

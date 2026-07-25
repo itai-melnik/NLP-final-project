@@ -298,7 +298,6 @@ def self_preference(df: pd.DataFrame) -> pd.DataFrame:
 
     For each judge, Δ for origin_claude and origin_gpt vs baseline. A judge that
     favors its own family shows a positive Δ when the claimed family matches it.
-    The open judge is the neutral control.
     """
     d = deltas(df)
     sub = d[d["variant"].isin(["origin_claude", "origin_gpt"])]

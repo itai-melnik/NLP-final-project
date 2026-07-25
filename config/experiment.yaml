@@ -95,33 +95,58 @@ judging:
   max_retries: 6
   retry_base_delay: 2.0            # seconds; exponential backoff
 
-  # The three judges. Model ids are TO-PIN placeholders — set the exact version
-  # strings right before the real run, then commit. temperature: null = use the
-  # provider default (required for the run-to-run consistency metric to be meaningful).
+  # The two judges — PINNED 2026-07-25 (spec §8). temperature: null = use the
+  # provider default (required for the run-to-run consistency metric to be
+  # meaningful). The claude judge is deliberately NOT the construction model
+  # (claude-opus-4-8): same family (disclosed limitation, §4.5) but not the
+  # same model. An open-source judge is deferred to future work (§9).
+  #
+  # reasoning_effort: high on both, pinned explicitly (spec §8) so effort is
+  # matched across providers rather than left to whatever each provider
+  # defaults to. Sent as output_config.effort (Anthropic) / reasoning_effort
+  # (OpenAI) — see src/prjudge/judge.py.
+  #
+  # context_window: recorded, NEVER requested — the API takes no
+  # context-window parameter, so this is provenance metadata only (no
+  # request field, no beta header). Values are each provider's live default
+  # confirmed 2026-07-25 via models.retrieve('claude-sonnet-5') and public
+  # model docs for gpt-5.6-terra:
+  #   - claude: 1_000_000 = max_input_tokens on the live model card; Sonnet 5
+  #     serves 1M context by default, no context-1m beta header needed
+  #     (unlike Sonnet 4.x).
+  #   - gpt: 1_050_000 = gpt-5.6-terra's published context window. Not the
+  #     same number as the 272k input-token threshold above which OpenAI's
+  #     higher-usage pricing tier kicks in — that's a billing boundary, not
+  #     the context window, and is not recorded here.
+  #
+  # Snapshot check (2026-07-25): client.models.retrieve('claude-sonnet-5')
+  # and client.models.list() (both providers) show no dated snapshot id for
+  # either model — only the undated aliases below exist. Aliases are kept as
+  # pinned; the runner logs the server-resolved `model_version` per row
+  # (spec §7/§8), which is the reproducibility record if either provider
+  # moves the alias later.
   judges:
     - name: claude                 # Claude-family frontier judge
       provider: anthropic
-      model: claude-opus-4-8       # TO-PIN
+      model: claude-sonnet-5
       temperature: null
+      reasoning_effort: high
+      context_window: 1000000
       env_key: ANTHROPIC_API_KEY
     - name: gpt                    # GPT-family frontier judge
       provider: openai
-      model: gpt-5                 # TO-PIN
+      model: gpt-5.6-terra
       temperature: null
+      reasoning_effort: high
+      context_window: 1050000
       env_key: OPENAI_API_KEY
-    - name: open                   # open-source neutral judge via hosted API
-      provider: openai_compatible  # OpenAI-compatible endpoint (Together/Fireworks/Groq)
-      model: meta-llama/Llama-3.3-70B-Instruct-Turbo  # TO-PIN
-      base_url: https://api.together.xyz/v1           # TO-PIN
-      temperature: null
-      env_key: OPEN_JUDGE_API_KEY
 
-  # Final full-matrix run spec (40 PRs x 9 variants x 3 judges x 3 trials = 3,240).
+  # Final full-matrix run spec (40 PRs x 9 variants x 2 judges x 3 trials = 2,160).
   final_run_name: results_v1
 
   # Batch mode (--batch on script 02): 50% off input+output tokens vs sync, same
-  # models, <=24h completion window. Only providers with a real batch API; the
-  # open judge (openai_compatible) has none and always runs sync.
+  # models, <=24h completion window. Any future openai_compatible judge (no
+  # real batch API) would always run sync.
   batch:
     providers: [anthropic, openai]   # providers with a real batch API
     completion_window: "24h"         # OpenAI batch parameter

@@ -3,7 +3,11 @@
 
 # Provider SDKs (lazy-imported inside src/prjudge/judge.py; only needed for
 # real Stage-2 runs, not for mock mode or Stages 0/1/3).
-anthropic==0.69.0
+# anthropic bumped 0.69.0 -> 0.120.0: 0.69 predates output_config/effort.
+# openai stays at 1.109.1: chat.completions.create already accepts
+# reasoning_effort (Literal["minimal","low","medium","high"]) at this
+# version — confirmed 2026-07-25 via signature inspection, no bump needed.
+anthropic==0.120.0
 openai==1.109.1
 
 # Data + stats

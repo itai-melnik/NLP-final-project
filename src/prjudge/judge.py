@@ -75,6 +75,13 @@ class AnthropicJudge(BaseJudgeClient):
         self._client = anthropic.Anthropic()
 
     def build_params(self, system: str, user: str, schema: dict, max_tokens: int) -> dict[str, Any]:
+        output_config: dict[str, Any] = {"format": {"type": "json_schema", "schema": schema}}
+        # reasoning_effort (config) -> output_config.effort. Never send a
+        # context-window / beta header; context_window in config is recorded
+        # provenance only (spec §8), not a request parameter.
+        effort = self.cfg.get("reasoning_effort")
+        if effort:
+            output_config["effort"] = effort
         kwargs: dict[str, Any] = dict(
             model=self.model,
             max_tokens=max_tokens,
@@ -83,7 +90,7 @@ class AnthropicJudge(BaseJudgeClient):
             system=[{"type": "text", "text": system,
                      "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": user}],
-            output_config={"format": {"type": "json_schema", "schema": schema}},
+            output_config=output_config,
         )
         # temperature is removed on Opus 4.8 / Sonnet 5 (400 if sent); only pass
         # it for older pinned models that still accept it.
@@ -136,6 +143,12 @@ class OpenAIJudge(BaseJudgeClient):
             },
             max_tokens=max_tokens,
         )
+        # reasoning_effort (config), passed straight through. Never send a
+        # context-window / beta header; context_window in config is recorded
+        # provenance only (spec §8), not a request parameter.
+        effort = self.cfg.get("reasoning_effort")
+        if effort:
+            kwargs["reasoning_effort"] = effort
         if self.temperature is not None:
             kwargs["temperature"] = self.temperature
         return kwargs

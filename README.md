@@ -51,10 +51,9 @@ python scripts/01_build_variants.py
 # Stage 2 — judging. Resumable; keyed per cell; pilot runs never mix with final.
 python scripts/02_run_judges.py --mock --run-name smoke        # no spend, tests keying/resume
 python scripts/02_run_judges.py --dry-run                      # ~$0.10, real APIs, schema check
-python scripts/02_run_judges.py --run-name results_v1          # full 3,240-call battery (sync)
+python scripts/02_run_judges.py --run-name results_v1          # full 2,160-call battery (sync)
 python scripts/02_run_judges.py --run-name results_v1 --batch  # same battery, 50% cheaper (<=24h);
                                                                  # idempotent — re-run to collect/advance
-python scripts/02_run_judges.py --run-name results_v1 --judges open  # open judge has no batch API
 
 # Stage 3 — analysis
 jupyter notebook notebooks/20_analysis.ipynb
