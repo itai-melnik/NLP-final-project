@@ -107,6 +107,14 @@ judging:
   # Final full-matrix run spec (40 PRs x 9 variants x 3 judges x 3 trials = 3,240).
   final_run_name: results_v1
 
+  # Batch mode (--batch on script 02): 50% off input+output tokens vs sync, same
+  # models, <=24h completion window. Only providers with a real batch API; the
+  # open judge (openai_compatible) has none and always runs sync.
+  batch:
+    providers: [anthropic, openai]   # providers with a real batch API
+    completion_window: "24h"         # OpenAI batch parameter
+    max_resubmits: 2                 # per-cell batch attempts before sync mop-up
+
 # ---------------------------------------------------------------------------
 # Versions stamped into artifacts (bump on any breaking change)
 # ---------------------------------------------------------------------------

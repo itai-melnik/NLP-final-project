@@ -254,6 +254,23 @@ limitations.
 
 **Artifact:** `results_v1.jsonl` (append-only, never edited).
 
+### 5.3 Batch mode (cost — no effect on the instrument)
+
+Anthropic's Message Batches API and OpenAI's Batch API each give a 50%
+discount on input+output tokens, same models, <=24h completion window. The
+final battery (3,240 calls) defaults to batch on cost grounds; the
+synchronous runner stays available for pilots, prompt tuning, dry-runs, the
+open judge (no batch API on OpenRouter/OpenAI-compatible hosts), and mop-up
+of cells that exhaust their batch resubmits. Both modes call the identical
+request-construction code (`build_params` on each judge client) and write the
+identical JSONL row schema, tagged with an `api_mode` (`sync`/`batch`)
+provenance field — resume and Stage-3 analysis are mode-agnostic. `--batch`
+on script 02 is a single idempotent "advance" step (collect finished
+batches → submit what's missing → report), re-run until complete, mirroring
+the sync resume philosophy rather than exposing separate submit/poll/collect
+subcommands. No change to prompts, schema, trials, or temperature — cost
+work never touches the instrument.
+
 ## 6. Stage 3 — Analysis (pure pandas; never calls an API)
 
 Two orthogonal judge properties are measured; the study's primary claim is about
@@ -345,6 +362,7 @@ Any number in the paper is regenerable from artifacts.
 | Issue matching | v1 secondary analysis | `file`/`line`/`diff_hunk` in annotations make location matching scriptable; adds detection-shift mechanism evidence |
 | Debiasing instructions in prompt | Excluded | We measure default deployed behavior; a debiasing-instruction arm is future work |
 | Rewrite construction | Claude Code skill (Opus 4.8, rule set cc-v1), no API | Zero marginal cost on subscription; validity is enforced by the unchanged §4.2 invariance checks + human spot-check, not by the generator; cache interface keeps rewrites regenerable by any model. Limitation: construction model shares the Claude judge's family (§4.5) — style-constant rewrite-only dose-response is the primary verbosity contrast |
+| Batch judging for the final run | Adopted for Claude/GPT via each provider's Batch API; open judge stays sync (no batch API) | 50% off input+output tokens, quality-identical per provider docs (same models) — pure cost saving on a 3,240-call battery; `api_mode` provenance field on every row keeps sync and batch rows indistinguishable to Stage-3 analysis; idempotent single-command "advance" step avoids a submit/poll/collect subcommand surface |
 
 ## 9. Future work (out of scope for v1)
 

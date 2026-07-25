@@ -62,18 +62,26 @@ class BaseJudgeClient:
 
 
 class AnthropicJudge(BaseJudgeClient):
-    """Claude-family judge via structured outputs (output_config.format)."""
+    """Claude-family judge via structured outputs (output_config.format).
+
+    ``build_params`` is factored out so ``batch.py`` can submit byte-identical
+    request bodies through the Message Batches API — no drift between sync
+    and batch modes.
+    """
 
     def __init__(self, judge_cfg: dict[str, Any]):
         super().__init__(judge_cfg)
         import anthropic  # noqa: PLC0415
         self._client = anthropic.Anthropic()
 
-    def judge(self, system: str, user: str, schema: dict, max_tokens: int) -> JudgeResponse:
+    def build_params(self, system: str, user: str, schema: dict, max_tokens: int) -> dict[str, Any]:
         kwargs: dict[str, Any] = dict(
             model=self.model,
             max_tokens=max_tokens,
-            system=system,
+            # Cached as an ephemeral prefix (shared system prompt, ~90% off on
+            # reads); best-effort under batch, applies identically to sync.
+            system=[{"type": "text", "text": system,
+                     "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": user}],
             output_config={"format": {"type": "json_schema", "schema": schema}},
         )
@@ -81,19 +89,34 @@ class AnthropicJudge(BaseJudgeClient):
         # it for older pinned models that still accept it.
         if self.temperature is not None:
             kwargs["temperature"] = self.temperature
-        resp = self._client.messages.create(**kwargs)
-        text = "".join(b.text for b in resp.content if getattr(b, "type", None) == "text")
-        parsed = _safe_json(text)
-        return JudgeResponse(
-            parsed=parsed, raw_text=text,
-            model_version=getattr(resp, "model", self.model),
-            input_tokens=getattr(resp.usage, "input_tokens", None),
-            output_tokens=getattr(resp.usage, "output_tokens", None),
-        )
+        return kwargs
+
+    def judge(self, system: str, user: str, schema: dict, max_tokens: int) -> JudgeResponse:
+        resp = self._client.messages.create(**self.build_params(system, user, schema, max_tokens))
+        return parse_anthropic_message(resp, default_model=self.model)
+
+
+def parse_anthropic_message(resp: Any, *, default_model: str | None = None) -> JudgeResponse:
+    """Build a ``JudgeResponse`` from an Anthropic ``Message`` — shared by the
+    sync path and batch collection (a succeeded batch result carries the same
+    ``Message`` type)."""
+    text = "".join(b.text for b in resp.content if getattr(b, "type", None) == "text")
+    parsed = _safe_json(text)
+    return JudgeResponse(
+        parsed=parsed, raw_text=text,
+        model_version=getattr(resp, "model", default_model),
+        input_tokens=getattr(resp.usage, "input_tokens", None),
+        output_tokens=getattr(resp.usage, "output_tokens", None),
+    )
 
 
 class OpenAIJudge(BaseJudgeClient):
-    """GPT-family or OpenAI-compatible (hosted OSS) judge via json_schema mode."""
+    """GPT-family or OpenAI-compatible (hosted OSS) judge via json_schema mode.
+
+    ``build_params`` is factored out so ``batch.py`` can write byte-identical
+    request bodies to the Batch API's input JSONL — no drift between sync and
+    batch modes.
+    """
 
     def __init__(self, judge_cfg: dict[str, Any]):
         super().__init__(judge_cfg)
@@ -102,7 +125,7 @@ class OpenAIJudge(BaseJudgeClient):
         base_url = judge_cfg.get("base_url")
         self._client = openai.OpenAI(api_key=api_key, base_url=base_url)
 
-    def judge(self, system: str, user: str, schema: dict, max_tokens: int) -> JudgeResponse:
+    def build_params(self, system: str, user: str, schema: dict, max_tokens: int) -> dict[str, Any]:
         kwargs: dict[str, Any] = dict(
             model=self.model,
             messages=[{"role": "system", "content": system},
@@ -115,16 +138,27 @@ class OpenAIJudge(BaseJudgeClient):
         )
         if self.temperature is not None:
             kwargs["temperature"] = self.temperature
-        resp = self._client.chat.completions.create(**kwargs)
-        text = resp.choices[0].message.content or ""
-        parsed = _safe_json(text)
-        usage = getattr(resp, "usage", None)
-        return JudgeResponse(
-            parsed=parsed, raw_text=text,
-            model_version=getattr(resp, "model", self.model),
-            input_tokens=getattr(usage, "prompt_tokens", None) if usage else None,
-            output_tokens=getattr(usage, "completion_tokens", None) if usage else None,
-        )
+        return kwargs
+
+    def judge(self, system: str, user: str, schema: dict, max_tokens: int) -> JudgeResponse:
+        resp = self._client.chat.completions.create(**self.build_params(system, user, schema, max_tokens))
+        return parse_openai_response_body(resp.model_dump(), default_model=self.model)
+
+
+def parse_openai_response_body(body: dict[str, Any], *, default_model: str | None = None) -> JudgeResponse:
+    """Build a ``JudgeResponse`` from an OpenAI chat-completion response body
+    (a plain dict) — shared by the sync path (``resp.model_dump()``) and batch
+    collection (the ``response.body`` dict in the output JSONL line)."""
+    choices = body.get("choices") or [{}]
+    text = ((choices[0] or {}).get("message") or {}).get("content") or ""
+    parsed = _safe_json(text)
+    usage = body.get("usage") or {}
+    return JudgeResponse(
+        parsed=parsed, raw_text=text,
+        model_version=body.get("model", default_model),
+        input_tokens=usage.get("prompt_tokens"),
+        output_tokens=usage.get("completion_tokens"),
+    )
 
 
 class MockJudge(BaseJudgeClient):
@@ -249,6 +283,46 @@ def load_judge_input(config: Config, task_id: str, variant: str) -> dict[str, An
         return json.load(f)["judge_input"]
 
 
+def build_result_row(
+    *,
+    key: str,
+    run_name: str,
+    task_id: str,
+    variant: str,
+    judge: str,
+    trial: int,
+    prompt_version: str,
+    model: str,
+    resp: JudgeResponse | None,
+    err: str | None,
+    mock: bool,
+    api_mode: str,
+    batch_id: str | None,
+) -> dict[str, Any]:
+    """One JSONL row, shared by the sync runner and the batch collector so both
+    modes write byte-identical schemas apart from ``api_mode``/``batch_id``."""
+    return {
+        "cell_key": key,
+        "run_name": run_name,
+        "task_id": task_id,
+        "variant": variant,
+        "judge": judge,
+        "trial": trial,
+        "prompt_version": prompt_version,
+        "model": model,
+        "model_version": resp.model_version if resp else None,
+        "mock": mock,
+        "api_mode": api_mode,
+        "batch_id": batch_id,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "parsed": resp.parsed if resp else None,
+        "raw_response": resp.raw_text if resp else None,
+        "input_tokens": resp.input_tokens if resp else None,
+        "output_tokens": resp.output_tokens if resp else None,
+        "error": err,
+    }
+
+
 def existing_keys(output_path: Path) -> set[str]:
     """Cell keys already recorded in the run's output file (for resume)."""
     keys: set[str] = set()
@@ -329,24 +403,12 @@ def run_judges(
             resp, err = _call_with_retry(client, system, user, schema, max_tokens,
                                          max_retries, base_delay)
             summary.attempted += 1
-            row = {
-                "cell_key": key,
-                "run_name": spec.run_name,
-                "task_id": tid,
-                "variant": variant,
-                "judge": judge,
-                "trial": trial,
-                "prompt_version": spec.prompt_version,
-                "model": judge_cfgs[judge]["model"],
-                "model_version": resp.model_version if resp else None,
-                "mock": mock,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "parsed": resp.parsed if resp else None,
-                "raw_response": resp.raw_text if resp else None,
-                "input_tokens": resp.input_tokens if resp else None,
-                "output_tokens": resp.output_tokens if resp else None,
-                "error": err,
-            }
+            row = build_result_row(
+                key=key, run_name=spec.run_name, task_id=tid, variant=variant,
+                judge=judge, trial=trial, prompt_version=spec.prompt_version,
+                model=judge_cfgs[judge]["model"], resp=resp, err=err, mock=mock,
+                api_mode="sync", batch_id=None,
+            )
             out.write(json.dumps(row, ensure_ascii=False) + "\n")
             out.flush()
             done.add(key)

@@ -16,6 +16,36 @@ their own --run-name and are never mixed with the final results_v1.jsonl.
 
     # final full battery
     python scripts/02_run_judges.py --run-name results_v1
+
+    # final battery, 50% cheaper — re-run until it reports complete
+    python scripts/02_run_judges.py --run-name results_v1 --batch
+    # open judge has no batch API — run it synchronously
+    python scripts/02_run_judges.py --run-name results_v1 --judges open
+    # mop up cells that failed twice in batch
+    python scripts/02_run_judges.py --run-name results_v1 --judges claude gpt
+
+Choosing sync vs batch
+----------------------
+Use **batch** (``--batch``) when: the run is large (>= ~100 calls), results
+can wait up to 24h, and the judge is Claude/GPT. 50% cheaper than sync,
+quality-identical per provider docs (same models). This is the default for
+the final ``results_v1`` battery and any extension-pool run.
+
+Use **sync** (default, no ``--batch``) when: piloting / prompt tuning (need
+answers now), ``--dry-run`` schema checks, the open judge (its provider has no
+batch API — it is skipped with a message under ``--batch``), or mopping up
+cells that exhausted their batch resubmits (``batch.max_resubmits`` in
+config, default 2 — re-run the same ``--judges`` without ``--batch``).
+
+Both modes write the same row schema to the same ``{run_name}.jsonl``; they
+can be freely mixed within one run_name. Each row's ``api_mode`` field
+("sync" or "batch") records which path produced it.
+
+``--batch`` is an idempotent "advance" step, not a submit/poll/collect
+triplet: each invocation collects any finished provider batches, submits
+whatever is still missing, and reports status. Exit code 0 = every cell in
+the spec is in the JSONL; 2 = batches still in-flight (re-run later); 1 = a
+cell needs a sync mop-up or a hard error occurred.
 """
 
 from __future__ import annotations
@@ -26,6 +56,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from prjudge.batch import run_judges_batch
 from prjudge.config import load_config
 from prjudge.judge import resolve_run_spec, run_judges
 
@@ -46,7 +77,16 @@ def main() -> int:
                     help="use canned responses (no API, no key) to test keying/resume")
     ap.add_argument("--dry-run", action="store_true",
                     help="2 PRs x 1 variant x 1 judge x 1 trial against real APIs (schema check)")
+    ap.add_argument("--batch", action="store_true",
+                    help="use each provider's Batch API (50%% cheaper, <=24h). Idempotent: "
+                         "re-run to collect + submit remaining cells. Incompatible with "
+                         "--dry-run; judges with no batch API are skipped with a message.")
     args = ap.parse_args()
+
+    if args.batch and args.dry_run:
+        print("--batch is incompatible with --dry-run (dry-run stays sync by definition)",
+              file=sys.stderr)
+        return 1
 
     config = load_config(args.config)
 
@@ -74,7 +114,11 @@ def main() -> int:
     n = len(spec.cells())
     print(f"Run '{spec.run_name}': {len(spec.task_ids)} PRs x {len(spec.variants)} variants "
           f"x {len(spec.judges)} judges x {spec.trials} trials = {n} cells "
-          f"(prompt {spec.prompt_version}){' [MOCK]' if mock else ''}")
+          f"(prompt {spec.prompt_version}){' [MOCK]' if mock else ''}"
+          f"{' [BATCH]' if args.batch else ''}")
+
+    if args.batch:
+        return _run_batch(config, spec, mock=mock)
 
     summary = run_judges(config, spec, mock=mock)
 
@@ -88,6 +132,32 @@ def main() -> int:
             print(f"  - {e}", file=sys.stderr)
         return 1
     return 0
+
+
+def _run_batch(config, spec, *, mock: bool) -> int:
+    summary = run_judges_batch(config, spec, mock=mock)
+
+    print(f"\nBatch advance: done={summary.done_total}/{summary.total_cells} "
+          f"collected_now={summary.collected_now} in_flight={summary.in_flight} "
+          f"needs_sync={summary.needs_sync}")
+    print(f"output: artifacts/runs/{spec.run_name}.jsonl")
+    print(f"state:  artifacts/runs/{spec.run_name}.batches.json")
+
+    if summary.needs_sync:
+        print(f"\n{summary.needs_sync} cell(s) exhausted their batch resubmits — "
+              f"mop up with: python scripts/02_run_judges.py --run-name {spec.run_name} "
+              f"--judges <judge> (no --batch)", file=sys.stderr)
+        return 1
+    if summary.has_in_flight:
+        print("\nBatches still in-flight — re-run this command later to collect.")
+        return 2
+    if summary.complete:
+        print("\nAll cells complete.")
+        return 0
+    # Cells remain that belong to a judge with no batch API (skipped above).
+    print("\nSome cells belong to judges with no batch API — run them "
+          "synchronously (see per-judge messages above).", file=sys.stderr)
+    return 1
 
 
 if __name__ == "__main__":
