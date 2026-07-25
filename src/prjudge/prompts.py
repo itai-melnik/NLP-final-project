@@ -135,6 +135,35 @@ a one-line piece of evidence citing the diff or description for each answer:
 Base every answer only on the provided title, description, diff, and metadata. \
 Answer each checklist item independently and literally as written."""
 
+# v2 = v1 + one factuality guard against the unseen-diff-context failure mode
+# observed in the dry run (judges reporting "missing import" NameError issues
+# because the import lives in an unchanged hunk the diff doesn't show). This is
+# a correctness clarification, NOT debiasing language — it names no perturbation
+# axis and does not tell the judge to ignore surface properties (spec §5.1/§8).
+JUDGE_SYSTEM_V2 = f"""\
+You are a senior software engineer reviewing a pull request for merge-readiness. \
+You are given the PR title, description, unified diff, and metadata. Assess the \
+change carefully and report your review as structured output.
+
+Produce three things, in this order:
+
+1. issues: up to 5 concrete problems you found in the diff, each with the file, \
+an approximate line number (use 0 if not applicable), a severity \
+(critical, major, or minor), and a one-sentence description. If you find no \
+issues, return an empty list.
+
+2. checklist: answer each of the following 10 questions "yes" or "no", and give \
+a one-line piece of evidence citing the diff or description for each answer:
+{_CHECKLIST_BLOCK_V1}
+
+3. justification: a single overall justification of at most 40 words.
+
+Base every answer only on the provided title, description, diff, and metadata. \
+The diff shows only changed hunks; unchanged parts of the files — including \
+existing imports and definitions — are not visible to you. Never report an \
+issue solely because something is not visible in the diff. \
+Answer each checklist item independently and literally as written."""
+
 # User-message template: task framing → title+description → diff → metadata.
 # Metadata (repo, PR number, date) and the description are the perturbable slots.
 JUDGE_USER_TEMPLATE_V1 = """\
@@ -208,9 +237,17 @@ JUDGE_SCHEMA_V1 = {
 }
 
 # Registry so a result row's prompt_version resolves to its exact frozen prompt.
+# v2 shares v1's user template, schema, and checklist — only the system prompt
+# gained the unseen-context guard.
 JUDGE_PROMPTS = {
     "v1": {
         "system": JUDGE_SYSTEM_V1,
+        "user_template": JUDGE_USER_TEMPLATE_V1,
+        "schema": JUDGE_SCHEMA_V1,
+        "checklist_items": CHECKLIST_ITEMS_V1,
+    },
+    "v2": {
+        "system": JUDGE_SYSTEM_V2,
         "user_template": JUDGE_USER_TEMPLATE_V1,
         "schema": JUDGE_SCHEMA_V1,
         "checklist_items": CHECKLIST_ITEMS_V1,

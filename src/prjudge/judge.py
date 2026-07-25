@@ -141,7 +141,11 @@ class OpenAIJudge(BaseJudgeClient):
                 "type": "json_schema",
                 "json_schema": {"name": "pr_review", "schema": schema, "strict": True},
             },
-            max_tokens=max_tokens,
+            # Newer reasoning-family models (o1/o3/gpt-5.x) reject the legacy
+            # `max_tokens` param on chat.completions.create and require
+            # `max_completion_tokens` instead; the latter is accepted across
+            # all current chat-completions models, so use it unconditionally.
+            max_completion_tokens=max_tokens,
         )
         # reasoning_effort (config), passed straight through. Never send a
         # context-window / beta header; context_window in config is recorded

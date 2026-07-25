@@ -90,9 +90,14 @@ variants:
 # ---------------------------------------------------------------------------
 judging:
   trials: 3                        # per cell, at provider-default temperature
-  prompt_version: v1               # which frozen system prompt to use (see prompts.py)
-  max_output_tokens: 2048
-  max_retries: 6
+  prompt_version: v2               # frozen system prompt (see prompts.py); v2 = v1
+                                   # + unseen-diff-context guard (dry-run fix, §8)
+  # 12k: dry run at effort high used ~4.2-4.8k output tokens (incl. hidden
+  # reasoning) on SMALL PRs against the old 8k cap; 12k gives headroom for
+  # pad4x variants and stays under the sync no-streaming SDK guard (~16k).
+  # Truncation wastes spend: a max_tokens-hit response is billed but unparseable.
+  max_output_tokens: 12000
+  max_retries: 3
   retry_base_delay: 2.0            # seconds; exponential backoff
 
   # The two judges — PINNED 2026-07-25 (spec §8). temperature: null = use the
@@ -101,10 +106,13 @@ judging:
   # (claude-opus-4-8): same family (disclosed limitation, §4.5) but not the
   # same model. An open-source judge is deferred to future work (§9).
   #
-  # reasoning_effort: high on both, pinned explicitly (spec §8) so effort is
-  # matched across providers rather than left to whatever each provider
-  # defaults to. Sent as output_config.effort (Anthropic) / reasoning_effort
-  # (OpenAI) — see src/prjudge/judge.py.
+  # reasoning_effort: medium on both, pinned explicitly (spec §8) so effort is
+  # matched across providers rather than left to provider defaults. Chosen over
+  # high for cost (reasoning tokens bill as output tokens and dominated spend in
+  # the dry run). LIMITATION (§8/§9): results characterize judges at medium
+  # effort; sensitivity of the measured biases to reasoning level is future
+  # work. Sent as output_config.effort (Anthropic) / reasoning_effort (OpenAI)
+  # — see src/prjudge/judge.py.
   #
   # context_window: recorded, NEVER requested — the API takes no
   # context-window parameter, so this is provenance metadata only (no
@@ -130,14 +138,14 @@ judging:
       provider: anthropic
       model: claude-sonnet-5
       temperature: null
-      reasoning_effort: high
+      reasoning_effort: medium
       context_window: 1000000
       env_key: ANTHROPIC_API_KEY
     - name: gpt                    # GPT-family frontier judge
       provider: openai
       model: gpt-5.6-terra
       temperature: null
-      reasoning_effort: high
+      reasoning_effort: medium
       context_window: 1050000
       env_key: OPENAI_API_KEY
 
@@ -158,5 +166,5 @@ judging:
 versions:
   selection: v1
   variants: v1
-  prompt: v1
+  prompt: v2                       # judge system prompt (see prompts.py registry)
   results: v1

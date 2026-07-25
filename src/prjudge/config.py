@@ -13,10 +13,15 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from dotenv import load_dotenv
 
 # Repo root = two levels up from this file (src/prjudge/config.py -> repo root).
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG_PATH = REPO_ROOT / "config" / "experiment.yaml"
+
+# Load repo-root .env into os.environ (does not override already-exported vars).
+# README / .env.example document this as the place for Stage-2 API keys.
+load_dotenv(REPO_ROOT / ".env")
 
 
 class Config:
