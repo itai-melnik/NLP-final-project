@@ -107,6 +107,10 @@ def _attach_covariates(df: pd.DataFrame, config: Config) -> pd.DataFrame:
     meta = pd.DataFrame(prs)[
         ["task_id", "difficulty", "language", "has_requested_changes", "short_desc"]
     ]
+    # Pre-registered terse-infeasibility waivers (config: variants.terse_waivers,
+    # spec §4.2/§8): their verb_terse cells are excluded from the terse arm.
+    waivers = set(config["variants"].get("terse_waivers", []))
+    meta["terse_waived"] = meta["task_id"].isin(waivers)
     # requested_change_count from annotations, per selected task.
     rcc = []
     for tid in meta["task_id"]:
@@ -256,16 +260,23 @@ def placebo_gate(df: pd.DataFrame) -> dict[str, Any]:
 VERBOSITY_ORDER = ["verb_terse", "baseline", "verb_pad2x", "verb_pad4x"]
 
 
-def verbosity_trend(df: pd.DataFrame, *, exclude_short_desc: bool = False) -> pd.DataFrame:
+def verbosity_trend(
+    df: pd.DataFrame, *, exclude_short_desc: bool = False, exclude_terse_waived: bool = True
+) -> pd.DataFrame:
     """Mean aggregate across terse < baseline < 2× < 4×, per judge, + Spearman trend.
 
     A monotonic score-vs-length trend is the target evidence (spec §4.1). Set
     ``exclude_short_desc`` for the sensitivity check that drops the 4 short-desc PRs.
+    ``exclude_terse_waived`` (default, pre-registered §4.2/§8) drops only the
+    verb_terse cells of terse-waived PRs — their rewrites could not reach the
+    0.5x band, so those cells carry no terse dose; baseline/pad cells stay in.
     """
     from scipy.stats import spearmanr  # noqa: PLC0415
     sub = df[df["variant"].isin(VERBOSITY_ORDER)].copy()
     if exclude_short_desc:
         sub = sub[~sub["short_desc"].fillna(False)]
+    if exclude_terse_waived and "terse_waived" in sub.columns:
+        sub = sub[~((sub["variant"] == "verb_terse") & sub["terse_waived"].fillna(False))]
     sub["dose"] = sub["variant"].map({v: i for i, v in enumerate(VERBOSITY_ORDER)})
     recs = []
     for judge, grp in sub.groupby("judge"):

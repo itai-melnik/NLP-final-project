@@ -155,7 +155,7 @@ def main() -> int:
     for task_id in sorted(task_ids):
         rec = records[task_id]
         base = base_fields(rec)
-        meta_short = {"short_desc": short_desc.get(task_id, False)}
+        meta_short = {"short_desc": short_desc.get(task_id, False), "task_id": task_id}
 
         built: dict[str, BuiltVariant] = {}
 
@@ -261,6 +261,11 @@ def _axis(vid: str) -> str:
     return VARIANT_AXIS[vid]
 
 
+def _to_lf(text: str) -> str:
+    """Normalize CRLF/CR line endings (common in GitHub API text) to LF."""
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
 def _write_spotcheck(config, out_dir, records, pool, frac, version):
     frac = max(0.20, frac)
     rng = random.Random(config["seed"])
@@ -277,14 +282,17 @@ def _write_spotcheck(config, out_dir, records, pool, frac, version):
         tid, vid = item["task_id"], item["variant"]
         with open(out_dir / f"{tid}__{vid}.json", "r", encoding="utf-8") as f:
             var = json.load(f)
-        baseline_desc = (records[tid].get("description") or "").strip()
+        # GitHub PR text may embed CRLF; normalize to LF so the report has
+        # consistent line endings (git refuses mixed CRLF/LF under safecrlf).
+        baseline_desc = _to_lf((records[tid].get("description") or "").strip())
+        rewritten_desc = _to_lf(var["judge_input"]["description"])
         lines += [f"## {tid} — {vid}", "",
                   "**Baseline description:**", "", "```", baseline_desc, "```", "",
-                  "**Rewritten description:**", "", "```", var["judge_input"]["description"], "```",
+                  "**Rewritten description:**", "", "```", rewritten_desc, "```",
                   "", "- [ ] No facts added  - [ ] No facts dropped  - [ ] Markdown preserved", "",
                   "---", ""]
     path = config.artifacts_dir / f"spotcheck_{version}.md"
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(lines))
     print(f"Spot-check sample: {path.relative_to(config.artifacts_dir.parent)} "
           f"({len(sample)} rewrites)")
