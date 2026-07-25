@@ -164,6 +164,60 @@ existing imports and definitions — are not visible to you. Never report an \
 issue solely because something is not visible in the diff. \
 Answer each checklist item independently and literally as written."""
 
+# v3 = v2 + two instability fixes from the second dry run (spec §8), neither
+# of which adds debiasing language or names a perturbation axis (spec §5.1):
+#
+# (a) Evidence-before-answer. v2 raw responses from BOTH providers emitted
+#     `"answer": ..., "evidence": ...` in schema property order, i.e. the model
+#     committed to yes/no and then rationalized. v3 flips the order in the
+#     schema (JUDGE_SCHEMA_V2) *and* in the instruction sentence below, so the
+#     one-line evidence is a deliberation that conditions the answer. Targets
+#     both observed failure modes without imposing any bar of our own.
+#     NOTE: this changes the semantics of `evidence` (deliberation, not
+#     post-hoc rationale) — v2/v3 evidence strings are not text-comparable.
+#
+# (b) De-compounded checklist item 1 (CHECKLIST_ITEMS_V2). A dry-run cell
+#     flipped item 1 solely on a narrow ("is the new logic buggy?") vs broad
+#     ("does behavior get worse, incl. previously-handled errors now
+#     propagating?") reading, contradicting the judge's own issue list. The
+#     parenthetical pins the broad reading. Same class of change as the v2
+#     unseen-hunk guard: a definitional clarification, not a verdict rule.
+#     Item 1 keeps its position and unfavorable-if-"yes" polarity.
+CHECKLIST_ITEMS_V2 = [
+    "Introduces a plausible correctness bug or behavioral regression "
+    "(a regression includes previously handled errors now propagating)",
+    *CHECKLIST_ITEMS_V1[1:],
+]
+
+_CHECKLIST_BLOCK_V2 = "\n".join(
+    f"  {i}. {item}" for i, item in enumerate(CHECKLIST_ITEMS_V2, start=1)
+)
+
+JUDGE_SYSTEM_V3 = f"""\
+You are a senior software engineer reviewing a pull request for merge-readiness. \
+You are given the PR title, description, unified diff, and metadata. Assess the \
+change carefully and report your review as structured output.
+
+Produce three things, in this order:
+
+1. issues: up to 5 concrete problems you found in the diff, each with the file, \
+an approximate line number (use 0 if not applicable), a severity \
+(critical, major, or minor), and a one-sentence description. If you find no \
+issues, return an empty list.
+
+2. checklist: for each of the following 10 questions, first give a one-line \
+piece of evidence citing the diff or description, then answer "yes" or "no" \
+based on that evidence:
+{_CHECKLIST_BLOCK_V2}
+
+3. justification: a single overall justification of at most 40 words.
+
+Base every answer only on the provided title, description, diff, and metadata. \
+The diff shows only changed hunks; unchanged parts of the files — including \
+existing imports and definitions — are not visible to you. Never report an \
+issue solely because something is not visible in the diff. \
+Answer each checklist item independently and literally as written."""
+
 # User-message template: task framing → title+description → diff → metadata.
 # Metadata (repo, PR number, date) and the description are the perturbable slots.
 JUDGE_USER_TEMPLATE_V1 = """\
@@ -188,16 +242,29 @@ Review the following pull request.
 """
 
 
-def _checklist_schema() -> dict:
+def _checklist_schema(evidence_first: bool = False) -> dict:
     """checklist as 10 named items — guarantees exactly 10 (array-count
-    constraints aren't supported by structured-output schemas)."""
-    item = {
-        "type": "object",
-        "properties": {
+    constraints aren't supported by structured-output schemas).
+
+    ``evidence_first`` controls property order. Both providers emit properties
+    in schema order (verified on raw v2 responses, which honored answer-first),
+    so v3 puts evidence first to make it a deliberation the answer conditions
+    on, rather than a post-hoc rationale.
+    """
+    if evidence_first:
+        props = {
+            "evidence": {"type": "string"},
+            "answer": {"type": "string", "enum": ["yes", "no"]},
+        }
+    else:
+        props = {
             "answer": {"type": "string", "enum": ["yes", "no"]},
             "evidence": {"type": "string"},
-        },
-        "required": ["answer", "evidence"],
+        }
+    item = {
+        "type": "object",
+        "properties": props,
+        "required": list(props),
         "additionalProperties": False,
     }
     keys = [f"item_{i}" for i in range(1, 11)]
@@ -236,9 +303,20 @@ JUDGE_SCHEMA_V1 = {
     "additionalProperties": False,
 }
 
+# v3's schema: identical to v1's except each checklist item is evidence-first.
+JUDGE_SCHEMA_V2 = {
+    **JUDGE_SCHEMA_V1,
+    "properties": {
+        **JUDGE_SCHEMA_V1["properties"],
+        "checklist": _checklist_schema(evidence_first=True),
+    },
+}
+
 # Registry so a result row's prompt_version resolves to its exact frozen prompt.
 # v2 shares v1's user template, schema, and checklist — only the system prompt
-# gained the unseen-context guard.
+# gained the unseen-context guard. v3 changes the system prompt (evidence
+# before answer, de-compounded item 1), the checklist text (item 1), and the
+# schema (evidence-first property order); the user template is unchanged.
 JUDGE_PROMPTS = {
     "v1": {
         "system": JUDGE_SYSTEM_V1,
@@ -251,6 +329,12 @@ JUDGE_PROMPTS = {
         "user_template": JUDGE_USER_TEMPLATE_V1,
         "schema": JUDGE_SCHEMA_V1,
         "checklist_items": CHECKLIST_ITEMS_V1,
+    },
+    "v3": {
+        "system": JUDGE_SYSTEM_V3,
+        "user_template": JUDGE_USER_TEMPLATE_V1,
+        "schema": JUDGE_SCHEMA_V2,
+        "checklist_items": CHECKLIST_ITEMS_V2,
     },
 }
 
