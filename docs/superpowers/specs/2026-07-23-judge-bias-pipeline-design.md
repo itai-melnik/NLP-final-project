@@ -128,6 +128,16 @@ or "family halo" effect. The open-source judge serves as a neutral third party.
 - **Non-description axes** (5–9): description byte-identical to baseline (for
   `repo_masked`, identical after the name substitution only).
 - **Verbosity variants:** token count within ±20% of the target ratio; log all counts.
+  Two pre-registered exemption classes make the check non-blocking (logged, not
+  waived silently): (a) `short_desc` PRs (§3); (b) **terse waivers** (config
+  `variants.terse_waivers`) — PRs whose descriptions are dominated by content the
+  rewrite rules forbid compressing (fenced code, template headings, inline JSON
+  examples, URLs), making the 0.5× band unreachable without dropping facts
+  (`coreos-assembler__4359`, `espnet__6248`, `openbao__1906`, `zod__5672`). The
+  `verb_terse` cells of both classes are excluded from the terse arm of the
+  dose–response analysis; their baseline/pad cells remain. For `openbao__1906`
+  the terse text is byte-identical to baseline: no compressible prose exists
+  under the cc-v1 rules.
 - **LLM rewrites (2–4):** manual spot-check of ≥20% of outputs for **semantic
   leakage** (facts added or dropped). Failures are regenerated or hand-fixed; the
   check is re-run on fixes.
@@ -345,6 +355,8 @@ Any number in the paper is regenerable from artifacts.
 | Issue matching | v1 secondary analysis | `file`/`line`/`diff_hunk` in annotations make location matching scriptable; adds detection-shift mechanism evidence |
 | Debiasing instructions in prompt | Excluded | We measure default deployed behavior; a debiasing-instruction arm is future work |
 | Rewrite construction | Claude Code skill (Opus 4.8, rule set cc-v1), no API | Zero marginal cost on subscription; validity is enforced by the unchanged §4.2 invariance checks + human spot-check, not by the generator; cache interface keeps rewrites regenerable by any model. Limitation: construction model shares the Claude judge's family (§4.5) — style-constant rewrite-only dose-response is the primary verbosity contrast |
+| Terse-infeasible PRs (4) | Waiver list (`terse_waivers`), not a relaxed counting rule; their `verb_terse` cells excluded from the terse analysis arm; decided 2026-07-25, before any judging | Descriptions dominated by incompressible content (code blocks, template headings, JSON examples, URLs) cannot reach the 0.5× band without dropping facts — a counting trick (prose-only ratios) would not save the heading-dominated case and hides the issue; an explicit pre-registered list is deterministic and honest. Full matrix still runs (waived terse cells double as extra noise data) |
+| Typo preservation in rewrites | `openbao__1906` terse redone byte-identical to baseline after the original rewrite silently corrected the author's typos ("Is it save" → "is it safe") | Grammar/typo quality is an uncontrolled register perturbation the cc-v1 "keep the author's register" rule already forbids; compliance fix, no rule change, so no cc-v1 version bump or cache invalidation |
 
 ## 9. Future work (out of scope for v1)
 

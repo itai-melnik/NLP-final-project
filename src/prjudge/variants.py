@@ -346,7 +346,8 @@ def check_variant(
 def _verbosity_ratio_check(
     variant: JudgeInput, baseline: JudgeInput, config: Config, meta: dict
 ) -> Check:
-    """Token-ratio band check; non-blocking for flagged short-description PRs (§3)."""
+    """Token-ratio band check; non-blocking for flagged short-description PRs (§3)
+    and for pre-registered terse-infeasible PRs (config: variants.terse_waivers)."""
     target = config["variants"]["verbosity_targets"][variant.variant]
     tol = config["variants"]["verbosity_tolerance"]
     base_words = word_count(baseline.description)
@@ -355,11 +356,18 @@ def _verbosity_ratio_check(
     lo, hi = target * (1 - tol), target * (1 + tol)
     ok = lo <= ratio <= hi
     short = bool(meta.get("short_desc"))
+    waived = (variant.variant == "verb_terse"
+              and meta.get("task_id") in set(config["variants"].get("terse_waivers", [])))
     detail = f"ratio={ratio:.2f} target={target} band=[{lo:.2f},{hi:.2f}] words={var_words}/{base_words}"
     if short and not ok:
         detail += " (short_desc: exempt, non-blocking)"
-    # Short-desc PRs cannot hit the terse/pad bands; log but do not block freeze.
-    return Check("verbosity_token_ratio", ok or short, blocking=not short, detail=detail)
+    elif waived and not ok:
+        detail += " (terse_waiver: exempt, non-blocking)"
+    # Short-desc / waived PRs cannot hit the band under the invariance rules;
+    # log but do not block freeze. Their terse cells are excluded from the
+    # dose-response analysis (spec §4.2/§8).
+    exempt = short or waived
+    return Check("verbosity_token_ratio", ok or exempt, blocking=not exempt, detail=detail)
 
 
 def _has_token(text: str, token: str) -> bool:

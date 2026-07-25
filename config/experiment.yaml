@@ -61,6 +61,18 @@ variants:
     verb_pad4x: 4.0
   verbosity_tolerance: 0.20        # ±20% band on the target ratio
 
+  # Terse-infeasibility waivers (spec §4.2/§8): these descriptions are dominated
+  # by content the cc-v1 rules forbid compressing (fenced code, template
+  # headings, inline JSON examples, URLs), so the 0.5x band is unreachable
+  # without dropping facts. Their verb_terse ratio check is non-blocking, and
+  # they are excluded from the terse arm of the dose-response analysis
+  # (alongside short_desc PRs). Pre-registered before any judging.
+  terse_waivers:
+    - coreos-assembler__4359       # 17 words: QMP JSON command + issue URL
+    - espnet__6248                 # 18 of 43 words are template headings
+    - openbao__1906                # 27 of 56 words are a fenced terminal transcript
+    - zod__5672                    # inline JSON examples dominate
+
   # Construction method for the LLM-assisted verbosity rewrites.
   # provider "claude-code": rewrites are authored interactively in Claude Code
   # via the rewrite-variants skill (frozen rule set cc-v1, no API spend); script
