@@ -90,7 +90,7 @@ variants:
 # ---------------------------------------------------------------------------
 judging:
   trials: 3                        # per cell, at provider-default temperature
-  prompt_version: v2               # frozen system prompt (see prompts.py); v2 = v1
+  prompt_version: v3               # frozen system prompt (see prompts.py); v2 = v1
                                    # + unseen-diff-context guard (dry-run fix, §8)
   # 12k: dry run at effort high used ~4.2-4.8k output tokens (incl. hidden
   # reasoning) on SMALL PRs against the old 8k cap; 12k gives headroom for
@@ -166,5 +166,5 @@ judging:
 versions:
   selection: v1
   variants: v1
-  prompt: v2                       # judge system prompt (see prompts.py registry)
+  prompt: v3                      # judge system prompt (see prompts.py registry)
   results: v1

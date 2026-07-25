@@ -20,6 +20,13 @@ Each call, per batch-capable judge in the spec:
    provider batch for them, and record it in the state file. An opportunistic
    immediate collect follows so an instant-complete mock batch finishes in the
    same invocation; real batches simply stay in-flight for the next call.
+   For clients with an org-level *enqueued*-token cap across concurrently
+   in-progress batches (``max_enqueued_tokens``, e.g. OpenAI — 900k tokens
+   for gpt-5.6-terra caused a whole-batch ``token_limit_exceeded`` failure at
+   ~360 cells/~12k output tokens each on 2026-07-25), requests are chunked to
+   fit under that cap (``_chunk_requests``, chars/4 input-token estimate) and
+   only one chunk is ever in flight per judge at a time — the next chunk is
+   submitted on a later ``--batch`` call once the current one collects.
 3. **Report** — a per-judge status the caller can print / use for exit codes.
 
 Cells that have failed ``max_resubmits`` times are never resubmitted — they
@@ -162,6 +169,11 @@ class BaseBatchClient:
     provider: str = "base"
     max_requests_per_batch: int = 10_000
     max_batch_bytes: int = 100 * 1024 * 1024
+    # Providers with an org-level *enqueued* token cap across in-progress
+    # batches (e.g. OpenAI) set this; it forces both per-chunk sizing and
+    # one-chunk-in-flight-at-a-time submission in run_judges_batch, since the
+    # cap applies to the sum across concurrently-queued batches, not just one.
+    max_enqueued_tokens: int | None = None
 
     def submit(self, items: list[BatchRequestItem]) -> str:
         raise NotImplementedError
@@ -220,9 +232,15 @@ class OpenAIBatchClient(BaseBatchClient):
     kwargs."""
 
     provider = "openai"
-    # OpenAI Batch API limits (well above our ~1,080/judge worst case).
+    # OpenAI Batch API request-count/payload limits (well above our
+    # ~1,080/judge worst case) — but the *enqueued-token* cap is org/tier
+    # limited (900k for gpt-5.6-terra as of 2026-07-25, confirmed via a
+    # failed batch: "token_limit_exceeded" with all 360 requests rejected
+    # at submission). 800k leaves headroom under that cap for the
+    # chars/4 token estimate's imprecision.
     max_requests_per_batch = 50_000
     max_batch_bytes = 200 * 1024 * 1024
+    max_enqueued_tokens = 800_000
     _TERMINAL_STATUSES = {"completed", "failed", "expired", "cancelled"}
 
     def __init__(self, judge_cfg: dict[str, Any], *, completion_window: str = "24h",
@@ -333,19 +351,30 @@ def make_batch_client(
 
 
 def _chunk_requests(items: list[BatchRequestItem], client: BaseBatchClient) -> list[list[BatchRequestItem]]:
-    """Split into provider-size-limited chunks (size guard; our worst case —
-    ~1,080 requests, ~45MB — fits in one chunk per judge today)."""
+    """Split into provider-size-limited chunks: request count and payload
+    bytes (our worst case — ~1,080 requests, ~45MB — fits in one chunk on
+    that axis today), plus, for clients with ``max_enqueued_tokens`` set, an
+    estimated input+output token budget per chunk (chars/4 for input; that
+    cap is enforced across *all* concurrently in-progress batches by the
+    provider, not per-batch — see ``max_enqueued_tokens`` and the sequential
+    submission gate in ``run_judges_batch``)."""
     chunks: list[list[BatchRequestItem]] = []
     current: list[BatchRequestItem] = []
     current_bytes = 0
+    current_tokens = 0
     for it in items:
         approx_bytes = len(it.system) + len(it.user) + 2_000  # rough per-request overhead
+        approx_tokens = (len(it.system) + len(it.user)) // 4 + it.max_tokens
+        over_tokens = (client.max_enqueued_tokens is not None
+                       and current_tokens + approx_tokens > client.max_enqueued_tokens)
         if current and (len(current) >= client.max_requests_per_batch
-                        or current_bytes + approx_bytes > client.max_batch_bytes):
+                        or current_bytes + approx_bytes > client.max_batch_bytes
+                        or over_tokens):
             chunks.append(current)
-            current, current_bytes = [], 0
+            current, current_bytes, current_tokens = [], 0, 0
         current.append(it)
         current_bytes += approx_bytes
+        current_tokens += approx_tokens
     if current:
         chunks.append(current)
     return chunks
@@ -365,6 +394,7 @@ class JudgeBatchStatus:
     in_flight: int = 0
     needs_sync: int = 0
     submitted_now: int = 0
+    queued: int = 0
 
     def line(self) -> str:
         if self.skipped_no_batch_api:
@@ -375,6 +405,8 @@ class JudgeBatchStatus:
             parts.append(f"submitted={self.submitted_now}")
         if self.in_flight:
             parts.append(f"in_flight={self.in_flight}")
+        if self.queued:
+            parts.append(f"queued={self.queued} (waiting for the in-flight chunk; re-run to advance)")
         if self.needs_sync:
             parts.append(f"needs_sync={self.needs_sync} (mop up with --judges {self.judge}, no --batch)")
         return f"  [{self.judge}] " + " ".join(parts)
@@ -514,13 +546,24 @@ def run_judges_batch(
                     continue
                 missing.append((tid, variant, j, trial, key))
 
-            if missing:
+            # Token-capped clients (OpenAI) must have at most one chunk
+            # in-flight at a time: the enqueued-token cap is enforced by the
+            # provider across all concurrently in-progress batches, not per
+            # batch, so queuing a second chunk before the first finishes can
+            # blow the cap even though each chunk is individually sized under
+            # it. `in_flight_keys` (computed above, post-collect) is only
+            # non-empty here if a previously submitted chunk hasn't ended yet.
+            sequential = client.max_enqueued_tokens is not None
+            if missing and not (sequential and in_flight_keys):
                 items = []
                 for tid, variant, j, trial, key in missing:
                     ji = load_judge_input(config, tid, variant)
                     user = build_judge_user_message(ji, spec.prompt_version)
                     items.append(BatchRequestItem(key, system, user, schema, max_tokens))
-                for chunk in _chunk_requests(items, client):
+                chunks = _chunk_requests(items, client)
+                if sequential:
+                    chunks = chunks[:1]  # next call submits the following chunk once this one ends
+                for chunk in chunks:
                     batch_id = client.submit(chunk)
                     state.add_batch(
                         batch_id=batch_id, provider=provider, judge=judge,
@@ -532,6 +575,7 @@ def run_judges_batch(
                 # real batches simply stay in-flight (poll_ended -> False).
                 jstatus.collected_now += collect_pending()
 
+            jstatus.queued = len(missing) - jstatus.submitted_now
             state.save()
 
             in_flight_keys = state.in_flight_cells(judge)
