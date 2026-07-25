@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.89 target=4.0 band=[3.20,4.80] words=70/18",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "Closes #8983\n\nThis particular thing right here goes ahead and tests for the fact that the very first value that there is happens to be `from`, and the whole reason for going and doing this test in the first place is specifically so as to be able to properly distinguish the particular case of exactly when it is that the channels themselves should end up being offset from one another.",
+    "diff_patch": "diff --git a/.changeset/dry-maps-flash.md b/.changeset/dry-maps-flash.md\nnew file mode 100644\nindex 0000000000..348547d1c8\n--- /dev/null\n+++ b/.changeset/dry-maps-flash.md\n@@ -0,0 +1,5 @@\n+---\n+\"stylelint\": minor\n+---\n+\n+Fixed: `hue-degree-notation` false negatives and positives for relative colors\ndiff --git a/lib/rules/hue-degree-notation/__tests__/index.mjs b/lib/rules/hue-degree-notation/__tests__/index.mjs\nindex 1e49a8671b..58c3d56685 100644\n--- a/lib/rules/hue-degree-notation/__tests__/index.mjs\n+++ b/lib/rules/hue-degree-notation/__tests__/index.mjs\n@@ -62,6 +62,21 @@ testRule({\n \t\t{\n \t\t\tcode: 'a { color: lch(56.29% 19.86 10deg/*comment*/) }',\n \t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: lch(from red 1 1 1deg) }',\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: hsl(from red 1deg 1 1) }',\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: oklch(from red 1 1 1deg) }',\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: oklch(from red l c h) }',\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: oklch(from hsl(270deg 60% 50%) l c h) }',\n+\t\t},\n \t],\n \n \treject: [\n@@ -130,6 +145,55 @@ testRule({\n \t\t\tendLine: 1,\n \t\t\tendColumn: 33,\n \t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: oklch(from red l c 10) }',\n+\t\t\tfixed: 'a { color: oklch(from red l c 10deg) }',\n+\t\t\tfix: {\n+\t\t\t\trange: [31, 32],\n+\t\t\t\ttext: '0deg',\n+\t\t\t},\n+\t\t\tmessage: messages.expected('10', '10deg'),\n+\t\t\tline: 1,\n+\t\t\tcolumn: 31,\n+\t\t\tendLine: 1,\n+\t\t\tendColumn: 33,\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: hsl(from red 10 s l) }',\n+\t\t\tfixed: 'a { color: hsl(from red 10deg s l) }',\n+\t\t\tfix: {\n+\t\t\t\trange: [25, 26],\n+\t\t\t\ttext: '0deg',\n+\t\t\t},\n+\t\t\tmessage: messages.expected('10', '10deg'),\n+\t\t\tline: 1,\n+\t\t\tcolumn: 25,\n+\t\t\tendLine: 1,\n+\t\t\tendColumn: 27,\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: hsl(FROM lch(0 0 10) 0 s l) }',\n+\t\t\tfixed: 'a { color: hsl(FROM lch(0 0 10deg) 0deg s l) }',\n+\t\t\twarnings: [\n+\t\t\t\t{\n+\t\t\t\t\tmessage: messages.expected('0', '0deg'),\n+\t\t\t\t\tcolumn: 33,\n+\t\t\t\t\tendLine: 1,\n+\t\t\t\t\tendColumn: 34,\n+\t\t\t\t\tfix: {\n+\t\t\t\t\t\trange: [32, 33],\n+\t\t\t\t\t\ttext: '0deg',\n+\t\t\t\t\t},\n+\t\t\t\t},\n+\t\t\t\t{\n+\t\t\t\t\tmessage: messages.expected('10', '10deg'),\n+\t\t\t\t\tline: 1,\n+\t\t\t\t\tcolumn: 29,\n+\t\t\t\t\tendLine: 1,\n+\t\t\t\t\tendColumn: 31,\n+\t\t\t\t},\n+\t\t\t],\n+\t\t},\n \t\t{\n \t\t\tcode: 'a { color: hsl(/*comment*/120 60% 70%) }',\n \t\t\tfixed: 'a { color: hsl(/*comment*/120deg 60% 70%) }',\n@@ -202,6 +266,15 @@ testRule({\n \t\t{\n \t\t\tcode: 'a { color: hsla(270, 60%, 50%, 15%) }',\n \t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: hsl(from red 270 60% 50%) }',\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: hsl(from red h s l) }',\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: oklch(from red l c 40) }',\n+\t\t},\n \t],\n \n \treject: [\n@@ -270,6 +343,32 @@ testRule({\n \t\t\tendLine: 1,\n \t\t\tendColumn: 36,\n \t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: oklch(from red l c 10deg) }',\n+\t\t\tfixed: 'a { color: oklch(from red l c 10) }',\n+\t\t\tfix: {\n+\t\t\t\trange: [32, 35],\n+\t\t\t\ttext: '',\n+\t\t\t},\n+\t\t\tmessage: messages.expected('10deg', '10'),\n+\t\t\tline: 1,\n+\t\t\tcolumn: 31,\n+\t\t\tendLine: 1,\n+\t\t\tendColumn: 36,\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { color: hsl(from red 120deg s l) }',\n+\t\t\tfixed: 'a { color: hsl(from red 120 s l) }',\n+\t\t\tfix: {\n+\t\t\t\trange: [27, 30],\n+\t\t\t\ttext: '',\n+\t\t\t},\n+\t\t\tmessage: messages.expected('120deg', '120'),\n+\t\t\tline: 1,\n+\t\t\tcolumn: 25,\n+\t\t\tendLine: 1,\n+\t\t\tendColumn: 31,\n+\t\t},\n \t\t{\n \t\t\tcode: stripIndent`\n \t\t\t\ta {\ndiff --git a/lib/rules/hue-degree-notation/index.mjs b/lib/rules/hue-degree-notation/index.mjs\nindex 42a1bc454b..9bca1f83e9 100644\n--- a/lib/rules/hue-degree-notation/index.mjs\n+++ b/lib/rules/hue-degree-notation/index.mjs\n@@ -100,12 +100,17 @@ function findHue(node) {\n \tconst args = node.nodes.filter(({ type }) => type === 'word' || type === 'function');\n \tconst value = node.value.toLowerCase();\n \n+\t// If using relative color syntax, for instance `oklch(from red l c h)`, the\n+\t// channels start from the 2nd value.\n+\tconst isRelativeColor = args[0]?.value.toLowerCase() === 'from';\n+\tconst offset = isRelativeColor ? 2 : 0;\n+\n \tif (HUE_FIRST_ARG_FUNCS.includes(value)) {\n-\t\treturn args[0];\n+\t\treturn args[0 + offset];\n \t}\n \n \tif (HUE_THIRD_ARG_FUNCS.includes(value)) {\n-\t\treturn args[2];\n+\t\treturn args[2 + offset];\n \t}\n \n \treturn undefined;\n",
+    "language": "JavaScript",
+    "merged_at": "2026-01-26T17:24:09Z",
+    "pr_number": 8985,
+    "repo": "stylelint/stylelint",
+    "task_id": "stylelint__8985",
+    "title": "Fix `hue-degree-notation` false negatives and positives for relative colors",
+    "variant": "verb_pad4x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "stylelint__8985",
+  "variant": "verb_pad4x"
+}

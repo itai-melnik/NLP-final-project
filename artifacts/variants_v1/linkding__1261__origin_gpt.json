@@ -1,0 +1,35 @@
+{
+  "axis": "origin",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true,
+    "trailer": "Co-Authored-By: Copilot <copilot@users.noreply.github.com>"
+  },
+  "judge_input": {
+    "description": "The rest of the links on this page are absolute paths without a specified hostname, but these in particlar use\r\nbuild_absolute_uri. I am running linkding behind two different load balancers which makes these links bubble up the \"internal\" hostname instead of the hostname I actually got to the page from.\n\nCo-Authored-By: Copilot <copilot@users.noreply.github.com>",
+    "diff_patch": "diff --git a/bookmarks/settings/base.py b/bookmarks/settings/base.py\nindex 563337d17..d9ac38e9a 100644\n--- a/bookmarks/settings/base.py\n+++ b/bookmarks/settings/base.py\n@@ -221,6 +221,16 @@\n     if LD_AUTH_PROXY_LOGOUT_URL:\n         LOGOUT_REDIRECT_URL = LD_AUTH_PROXY_LOGOUT_URL\n \n+LD_USE_X_FORWARDED_HOST = os.getenv(\"LD_USE_X_FORWARDED_HOST\", False) in (\n+    True,\n+    \"True\",\n+    \"true\",\n+    \"1\",\n+)\n+\n+if LD_USE_X_FORWARDED_HOST:\n+    USE_X_FORWARDED_HOST = LD_USE_X_FORWARDED_HOST\n+\n # CSRF trusted origins\n trusted_origins = os.getenv(\"LD_CSRF_TRUSTED_ORIGINS\", \"\")\n if trusted_origins:\ndiff --git a/bookmarks/tests/test_settings_integrations_view.py b/bookmarks/tests/test_settings_integrations_view.py\nindex 93fe4df30..297b98402 100644\n--- a/bookmarks/tests/test_settings_integrations_view.py\n+++ b/bookmarks/tests/test_settings_integrations_view.py\n@@ -134,18 +134,18 @@ def test_should_display_feed_urls(self):\n \n         token = FeedToken.objects.first()\n         self.assertInHTML(\n-            f'<a target=\"_blank\" href=\"http://testserver/feeds/{token.key}/all\">All bookmarks</a>',\n+            f'<a target=\"_blank\" href=\"/feeds/{token.key}/all\">All bookmarks</a>',\n             html,\n         )\n         self.assertInHTML(\n-            f'<a target=\"_blank\" href=\"http://testserver/feeds/{token.key}/unread\">Unread bookmarks</a>',\n+            f'<a target=\"_blank\" href=\"/feeds/{token.key}/unread\">Unread bookmarks</a>',\n             html,\n         )\n         self.assertInHTML(\n-            f'<a target=\"_blank\" href=\"http://testserver/feeds/{token.key}/shared\">Shared bookmarks</a>',\n+            f'<a target=\"_blank\" href=\"/feeds/{token.key}/shared\">Shared bookmarks</a>',\n             html,\n         )\n         self.assertInHTML(\n-            '<a target=\"_blank\" href=\"http://testserver/feeds/shared\">Public shared bookmarks</a>',\n+            '<a target=\"_blank\" href=\"/feeds/shared\">Public shared bookmarks</a>',\n             html,\n         )\ndiff --git a/bookmarks/views/settings.py b/bookmarks/views/settings.py\nindex 0eda8c5f0..c4523cbee 100644\n--- a/bookmarks/views/settings.py\n+++ b/bookmarks/views/settings.py\n@@ -178,18 +178,11 @@ def integrations(request):\n     )\n \n     feed_token = FeedToken.objects.get_or_create(user=request.user)[0]\n-    all_feed_url = request.build_absolute_uri(\n-        reverse(\"linkding:feeds.all\", args=[feed_token.key])\n-    )\n-    unread_feed_url = request.build_absolute_uri(\n-        reverse(\"linkding:feeds.unread\", args=[feed_token.key])\n-    )\n-    shared_feed_url = request.build_absolute_uri(\n-        reverse(\"linkding:feeds.shared\", args=[feed_token.key])\n-    )\n-    public_shared_feed_url = request.build_absolute_uri(\n-        reverse(\"linkding:feeds.public_shared\")\n-    )\n+\n+    all_feed_url = reverse(\"linkding:feeds.all\", args=[feed_token.key])\n+    unread_feed_url = reverse(\"linkding:feeds.unread\", args=[feed_token.key])\n+    shared_feed_url = reverse(\"linkding:feeds.shared\", args=[feed_token.key])\n+    public_shared_feed_url = reverse(\"linkding:feeds.public_shared\")\n \n     return render(\n         request,\ndiff --git a/docs/src/content/docs/options.md b/docs/src/content/docs/options.md\nindex df10b5365..f1e4bdaa5 100644\n--- a/docs/src/content/docs/options.md\n+++ b/docs/src/content/docs/options.md\n@@ -194,6 +194,14 @@ Multiple origins can be specified by separating them with a comma (`,`).\n \n This setting is adopted from the Django framework used by linkding, more information on the setting is available in the [Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#std-setting-CSRF_TRUSTED_ORIGINS).\n \n+### `LD_USE_X_FORWARDED_HOST`\n+\n+Values: `true` or `false` | Default =  `false`\n+\n+If enabled the server will trust the `X-Forwarded-Host` header over the `Host` header to determine the hostname of the server. This should only be enabled if a proxy which sets this header is in use.\n+\n+This setting is adopted from the Django framework used by linkding, more information on the setting is available in the [Django documentation](https://docs.djangoproject.com/en/6.0/ref/settings/#std-setting-USE_X_FORWARDED_HOST)\n+\n ### `LD_LOG_X_FORWARDED_FOR`\n \n Values: `true` or `false` | Default =  `false`\n",
+    "language": "Python",
+    "merged_at": "2026-01-05T08:25:54Z",
+    "pr_number": 1261,
+    "repo": "sissbruecker/linkding",
+    "task_id": "linkding__1261",
+    "title": "Remove absolute URIs from settings page",
+    "variant": "origin_gpt"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "linkding__1261",
+  "variant": "origin_gpt"
+}

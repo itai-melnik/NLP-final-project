@@ -1,0 +1,42 @@
+{
+  "axis": "prestige",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true,
+    "masked_name": "litgpt",
+    "masked_org": "Lightning-AI"
+  },
+  "judge_input": {
+    "description": "## What does this PR do?\r\nThis PR adds a `generate_strategy` option to the `repo serve` command. This allows users to explicitly specify the generation strategy (e.g., `\"sequential\"`, `\"tensor_parallel\"`) when initializing the model for serving.\r\n\r\n## Motivation\r\nPreviously, the `generate_strategy` was hardcoded to `\"sequential\"` in `serve.py` when verifying `devices > 1`, giving users no option to choose alternative strategies like `\"tensor_parallel\"` which might be preferred for certain deployments.\r\n\r\n## Who can review this?\r\n@bhimrazy \r\nAnyone from the community is free to review once the tests are passed.",
+    "diff_patch": "diff --git a/litgpt/deploy/serve.py b/litgpt/deploy/serve.py\nindex c7122b519b..4385d7885d 100644\n--- a/litgpt/deploy/serve.py\n+++ b/litgpt/deploy/serve.py\n@@ -33,6 +33,7 @@ def __init__(\n         max_new_tokens: int = 50,\n         devices: int = 1,\n         api_path: Optional[str] = None,\n+        generate_strategy: Optional[Literal[\"sequential\", \"tensor_parallel\"]] = None,\n     ) -> None:\n         if not _LITSERVE_AVAILABLE:\n             raise ImportError(str(_LITSERVE_AVAILABLE))\n@@ -47,6 +48,7 @@ def __init__(\n         self.max_new_tokens = max_new_tokens\n         self.top_p = top_p\n         self.devices = devices\n+        self.generate_strategy = generate_strategy\n \n     def setup(self, device: str) -> None:\n         if \":\" in device:\n@@ -64,7 +66,8 @@ def setup(self, device: str) -> None:\n             accelerator=accelerator,\n             quantize=self.quantize,\n             precision=self.precision,\n-            generate_strategy=(\"sequential\" if self.devices is not None and self.devices > 1 else None),\n+            generate_strategy=self.generate_strategy\n+            or (\"sequential\" if self.devices is not None and self.devices > 1 else None),\n         )\n         print(\"Model successfully initialized.\", file=sys.stderr)\n \n@@ -85,6 +88,7 @@ def __init__(\n         max_new_tokens: int = 50,\n         devices: int = 1,\n         api_path: Optional[str] = None,\n+        generate_strategy: Optional[str] = None,\n     ):\n         super().__init__(\n             checkpoint_dir,\n@@ -96,6 +100,7 @@ def __init__(\n             max_new_tokens,\n             devices,\n             api_path=api_path,\n+            generate_strategy=generate_strategy,\n         )\n \n     def setup(self, device: str):\n@@ -128,6 +133,7 @@ def __init__(\n         max_new_tokens: int = 50,\n         devices: int = 1,\n         api_path: Optional[str] = None,\n+        generate_strategy: Optional[str] = None,\n     ):\n         super().__init__(\n             checkpoint_dir,\n@@ -139,6 +145,7 @@ def __init__(\n             max_new_tokens,\n             devices,\n             api_path=api_path,\n+            generate_strategy=generate_strategy,\n         )\n \n     def setup(self, device: str):\n@@ -171,6 +178,7 @@ def __init__(\n         max_new_tokens: int = 50,\n         devices: int = 1,\n         api_path: Optional[str] = None,\n+        generate_strategy: Optional[str] = None,\n     ):\n         super().__init__(\n             checkpoint_dir,\n@@ -182,6 +190,7 @@ def __init__(\n             max_new_tokens,\n             devices,\n             api_path=api_path,\n+            generate_strategy=generate_strategy,\n         )\n \n     def setup(self, device: str):\n@@ -241,6 +250,7 @@ def run_server(\n     access_token: Optional[str] = None,\n     api_path: Optional[str] = \"/predict\",\n     timeout: int = 30,\n+    generate_strategy: Optional[Literal[\"sequential\", \"tensor_parallel\"]] = None,\n ) -> None:\n     \"\"\"Serve a LitGPT model using LitServe.\n \n@@ -284,6 +294,10 @@ def run_server(\n         access_token: Optional API token to access models with restrictions.\n         api_path: The custom API path for the endpoint (e.g., \"/my_api/classify\").\n         timeout: Request timeout in seconds. Defaults to 30.\n+        generate_strategy: The generation strategy to use. The \"sequential\" strategy (default for devices > 1)\n+            allows running models that wouldn't fit in a single card by partitioning the transformer blocks across\n+            all devices and running them sequentially. \"tensor_parallel\" shards the model using tensor parallelism.\n+            If None (default for devices = 1), the model is not distributed.\n     \"\"\"\n     checkpoint_dir = auto_download_checkpoint(model_name=checkpoint_dir, access_token=access_token)\n     pprint(locals())\n@@ -301,6 +315,7 @@ def run_server(\n             max_new_tokens=max_new_tokens,\n             devices=devices,\n             api_path=api_path,\n+            generate_strategy=generate_strategy,\n         ),\n         spec=OpenAISpec() if openai_spec else None,\n         accelerator=accelerator,\ndiff --git a/tests/test_serve.py b/tests/test_serve.py\nindex dfe99e1839..fc413ef5f9 100644\n--- a/tests/test_serve.py\n+++ b/tests/test_serve.py\n@@ -254,3 +254,45 @@ def run_server():\n         if process:\n             kill_process_tree(process.pid)\n         server_thread.join()\n+\n+\n+@pytest.mark.parametrize(\n+    \"generate_strategy\",\n+    [\n+        pytest.param(\"sequential\", marks=_RunIf(min_cuda_gpus=1)),\n+        pytest.param(\"tensor_parallel\", marks=_RunIf(min_cuda_gpus=2)),\n+    ],\n+)\n+def test_serve_with_generate_strategy(tmp_path, generate_strategy):\n+    seed_everything(123)\n+    ours_config = Config.from_name(\"pythia-14m\")\n+    download_from_hub(repo_id=\"EleutherAI/pythia-14m\", tokenizer_only=True, checkpoint_dir=tmp_path)\n+    shutil.move(str(tmp_path / \"EleutherAI\" / \"pythia-14m\" / \"tokenizer.json\"), str(tmp_path))\n+    shutil.move(str(tmp_path / \"EleutherAI\" / \"pythia-14m\" / \"tokenizer_config.json\"), str(tmp_path))\n+    ours_model = GPT(ours_config)\n+    checkpoint_path = tmp_path / \"lit_model.pth\"\n+    torch.save(ours_model.state_dict(), checkpoint_path)\n+    config_path = tmp_path / \"model_config.yaml\"\n+    with open(config_path, \"w\", encoding=\"utf-8\") as fp:\n+        yaml.dump(asdict(ours_config), fp)\n+\n+    # Test with generate strategy\n+    run_command = [\"litgpt\", \"serve\", tmp_path, \"--generate_strategy\", generate_strategy]\n+\n+    process = None\n+\n+    def run_server():\n+        nonlocal process\n+        try:\n+            process = subprocess.Popen(run_command, stdout=None, stderr=None, text=True)\n+        except subprocess.TimeoutExpired:\n+            print(\"Server start-up timeout expired\")\n+\n+    server_thread = threading.Thread(target=run_server)\n+    server_thread.start()\n+\n+    _wait_and_check_response()\n+\n+    if process:\n+        kill_process_tree(process.pid)\n+    server_thread.join()\n",
+    "language": "Python",
+    "merged_at": "2026-01-20T08:28:24Z",
+    "pr_number": 2188,
+    "repo": "project/repo",
+    "task_id": "litgpt__2188",
+    "title": "feat: add generate_strategy option to litgpt serve",
+    "variant": "repo_masked"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "litgpt__2188",
+  "variant": "repo_masked"
+}

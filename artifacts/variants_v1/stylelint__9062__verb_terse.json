@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.41 target=0.5 band=[0.40,0.60] words=147/356",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "<!-- Each PR needs an open issue unless it's a docs fix; else create one first. -->\n\n> Which issue, if any, is this issue related to?\n\nSimilar to https://github.com/stylelint/stylelint/pull/9061\n\n> Is there anything in the PR that needs further explanation?\n\nChanges the rule to only call `fork` if the `*syntax` secondary options are used, or if the linted file contains `@property` at-rules extending the syntax; otherwise it uses the cached lexer from `context`.\n\nI'll open an issue to remove the (now redundant, since we added `languageOption`) secondary options, leaving only the more performant `languageOption`. Forking on new definitions in a file seems unavoidable, though.\n\nBenchmarked using our standard config:\n\n```\nexport default {\n\textends: ['stylelint-config-standard'],\n};\n```\n\nNearly halves the time on 1000 CSS files (Small −22.0%, Medium −37.7%, Large −44.1%, X-Large −45.8%). Cumulative gains combined with https://github.com/stylelint/stylelint/pull/9061: Small −40.2%, Medium −60.9%, Large −70.8%, X-Large −75.6%.",
+    "diff_patch": "diff --git a/.changeset/green-rivers-try.md b/.changeset/green-rivers-try.md\nnew file mode 100644\nindex 0000000000..b714725fd9\n--- /dev/null\n+++ b/.changeset/green-rivers-try.md\n@@ -0,0 +1,5 @@\n+---\n+\"stylelint\": patch\n+---\n+\n+Fixed: `declaration-property-value-no-unknown` performance\ndiff --git a/lib/rules/declaration-property-value-no-unknown/__tests__/index.mjs b/lib/rules/declaration-property-value-no-unknown/__tests__/index.mjs\nindex cddc5222d6..6f054f7f4f 100644\n--- a/lib/rules/declaration-property-value-no-unknown/__tests__/index.mjs\n+++ b/lib/rules/declaration-property-value-no-unknown/__tests__/index.mjs\n@@ -947,6 +947,37 @@ testRule({\n \t],\n });\n \n+testRule({\n+\truleName,\n+\tconfig: true,\n+\tlanguageOptions: {\n+\t\tsyntax: {\n+\t\t\tproperties: { top: '| <--foo()>' },\n+\t\t\ttypes: { '--foo()': '--foo( <length-percentage> )' },\n+\t\t},\n+\t},\n+\n+\taccept: [\n+\t\t{\n+\t\t\tcode: 'a { top: 10px; }',\n+\t\t},\n+\t\t{\n+\t\t\tcode: 'a { top: --foo(5px); }',\n+\t\t},\n+\t],\n+\n+\treject: [\n+\t\t{\n+\t\t\tcode: 'a { top: unknown; }',\n+\t\t\tmessage: messages.rejected('top', 'unknown'),\n+\t\t\tline: 1,\n+\t\t\tcolumn: 10,\n+\t\t\tendLine: 1,\n+\t\t\tendColumn: 17,\n+\t\t},\n+\t],\n+});\n+\n testRule({\n \truleName,\n \tconfig: true,\ndiff --git a/lib/rules/declaration-property-value-no-unknown/index.mjs b/lib/rules/declaration-property-value-no-unknown/index.mjs\nindex 6f239097e8..b3fdb3a6dd 100644\n--- a/lib/rules/declaration-property-value-no-unknown/index.mjs\n+++ b/lib/rules/declaration-property-value-no-unknown/index.mjs\n@@ -18,6 +18,7 @@ import { isRegExp, isString } from '../../utils/validateTypes.mjs';\n import { atRuleRegexes } from '../../utils/regexes.mjs';\n import { declarationValueIndex } from '../../utils/nodeFieldIndices.mjs';\n import getDeclarationValue from '../../utils/getDeclarationValue.mjs';\n+import getLexer from '../../utils/getLexer.mjs';\n import isCustomProperty from '../../utils/isCustomProperty.mjs';\n import { isDeclaration } from '../../utils/typeGuards.mjs';\n import isDescriptorDeclaration from '../../utils/isDescriptorDeclaration.mjs';\n@@ -59,7 +60,7 @@ const HAS_MATH_FUNCTION = new RegExp(`\\\\b(?:${[...mathFunctions.values()].join('\n /** @typedef {Parameters<Rule>[1]} SecondaryOptions */\n \n /** @type {Rule} */\n-const rule = (primary, secondaryOptions) => {\n+const rule = (primary, secondaryOptions, context) => {\n \treturn (root, result) => {\n \t\tconst validOptions = validateOptions(\n \t\t\tresult,\n@@ -129,14 +130,21 @@ const rule = (primary, secondaryOptions) => {\n \t\t\t}\n \t\t});\n \n-\t\tconst languageOptions = result.stylelint.config?.languageOptions;\n-\t\tconst forkedLexer = fork(\n-\t\t\tmergeSyntaxDefinitions(\n-\t\t\t\tsyntaxPatches,\n-\t\t\t\t{ ...languageOptions?.syntax, atrules: languageOptions?.syntax?.atRules },\n-\t\t\t\t{ properties: propertiesSyntax, types: typesSyntax },\n-\t\t\t),\n-\t\t).lexer;\n+\t\tconst hasExtraSyntax =\n+\t\t\tObject.keys(propertiesSyntax).length > 0 || Object.keys(typesSyntax).length > 0;\n+\n+\t\tconst lexer = hasExtraSyntax\n+\t\t\t? fork(\n+\t\t\t\t\tmergeSyntaxDefinitions(\n+\t\t\t\t\t\tsyntaxPatches,\n+\t\t\t\t\t\t{\n+\t\t\t\t\t\t\t...result.stylelint.config?.languageOptions?.syntax,\n+\t\t\t\t\t\t\tatrules: result.stylelint.config?.languageOptions?.syntax?.atRules,\n+\t\t\t\t\t\t},\n+\t\t\t\t\t\t{ properties: propertiesSyntax, types: typesSyntax },\n+\t\t\t\t\t),\n+\t\t\t\t).lexer\n+\t\t\t: getLexer(context);\n \n \t\troot.walkDecls((decl) => {\n \t\t\tconst { prop } = decl;\n@@ -187,12 +195,7 @@ const rule = (primary, secondaryOptions) => {\n \t\t\t}\n \n \t\t\t// Check if value contains math functions that need validation\n-\t\t\tconst mathFuncResult = validateMathFunctions(\n-\t\t\t\tvalue,\n-\t\t\t\tprop,\n-\t\t\t\tforkedLexer,\n-\t\t\t\ttypedCustomPropertyNames,\n-\t\t\t);\n+\t\t\tconst mathFuncResult = validateMathFunctions(value, prop, lexer, typedCustomPropertyNames);\n \n \t\t\tif (mathFuncResult === 'skip') return;\n \n@@ -215,7 +218,7 @@ const rule = (primary, secondaryOptions) => {\n \t\t\t\treturn;\n \t\t\t}\n \n-\t\t\tconst { error } = forkedLexer.matchProperty(\n+\t\t\tconst { error } = lexer.matchProperty(\n \t\t\t\ttypedCustomPropertyNames.get(prop) ?? prop,\n \t\t\t\tcssTreeValueNode,\n \t\t\t);\n@@ -384,11 +387,11 @@ function containsMathFunction(value) {\n  *\n  * @param {string} value - The CSS property value\n  * @param {string} prop - The property name\n- * @param {ReturnType<import('css-tree')['fork']>['lexer']} forkedLexer - The csstree lexer\n+ * @param {ReturnType<import('css-tree')['fork']>['lexer']} lexer - The csstree lexer\n  * @param {Map<string, string>} typedCustomPropertyNames - Map of typed custom property names\n  * @returns {'skip' | 'invalid' | 'continue'} - The validation result\n  */\n-function validateMathFunctions(value, prop, forkedLexer, typedCustomPropertyNames) {\n+function validateMathFunctions(value, prop, lexer, typedCustomPropertyNames) {\n \t// If the value doesn't contain any math functions, continue with normal validation\n \tif (!containsMathFunction(value)) {\n \t\treturn 'continue';\n@@ -408,7 +411,7 @@ function validateMathFunctions(value, prop, forkedLexer, typedCustomPropertyName\n \t\ttry {\n \t\t\tconst solvedCssTreeNode = parse(solvedValue, { context: 'value', positions: true });\n \n-\t\t\tconst { error } = forkedLexer.matchProperty(\n+\t\t\tconst { error } = lexer.matchProperty(\n \t\t\t\ttypedCustomPropertyNames.get(prop) ?? prop,\n \t\t\t\tsolvedCssTreeNode,\n \t\t\t);\n",
+    "language": "JavaScript",
+    "merged_at": "2026-02-12T10:55:08Z",
+    "pr_number": 9062,
+    "repo": "stylelint/stylelint",
+    "task_id": "stylelint__9062",
+    "title": "Fix `declaration-property-value-no-unknown` performance",
+    "variant": "verb_terse"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "stylelint__9062",
+  "variant": "verb_terse"
+}

@@ -1,0 +1,3 @@
+# Generated spot-check report embeds GitHub PR text (CRLF); normalize to LF
+# so `git add` doesn't fail under core.autocrlf=input + core.safecrlf=true.
+artifacts/spotcheck_v1.md text eol=lf

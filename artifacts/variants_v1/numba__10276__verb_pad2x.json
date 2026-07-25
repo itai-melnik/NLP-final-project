@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=2.40 target=2.0 band=[1.60,2.40] words=24/10",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "This here is my first ever contribution over to numba, and I really would appreciate receiving any and all of the feedback. Resolves #10270.",
+    "diff_patch": "diff --git a/docs/source/reference/pysupported.rst b/docs/source/reference/pysupported.rst\nindex 01bc8c5b97a..1823aca388c 100644\n--- a/docs/source/reference/pysupported.rst\n+++ b/docs/source/reference/pysupported.rst\n@@ -1070,6 +1070,7 @@ The following functions from the :mod:`math` module are supported:\n * :func:`math.erf`\n * :func:`math.erfc`\n * :func:`math.exp`\n+* :func:`math.exp2`\n * :func:`math.expm1`\n * :func:`math.fabs`\n * :func:`math.floor`\ndiff --git a/docs/upcoming_changes/10276.new_feature.rst b/docs/upcoming_changes/10276.new_feature.rst\nnew file mode 100644\nindex 00000000000..1867ce0f1d9\n--- /dev/null\n+++ b/docs/upcoming_changes/10276.new_feature.rst\n@@ -0,0 +1,4 @@\n+Add support for ``math.exp2``.\n+------------------------------\n+\n+Support for ``math.exp2`` is added.\n\\ No newline at end of file\ndiff --git a/numba/core/typing/mathdecl.py b/numba/core/typing/mathdecl.py\nindex 2b46e4316e4..83bd4965c11 100644\n--- a/numba/core/typing/mathdecl.py\n+++ b/numba/core/typing/mathdecl.py\n@@ -1,4 +1,5 @@\n import math\n+import sys\n from numba.core import types, utils\n from numba.core.typing.templates import (AttributeTemplate, ConcreteTemplate,\n                                          signature, Registry)\n@@ -40,7 +41,8 @@ class Math_unary(ConcreteTemplate):\n         signature(types.float32, types.float32),\n         signature(types.float64, types.float64),\n     ]\n-\n+if sys.version_info >= (3, 11):\n+    Math_unary = infer_global(math.exp2)(Math_unary)\n \n @infer_global(math.atan2)\n class Math_atan2(ConcreteTemplate):\ndiff --git a/numba/cpython/mathimpl.py b/numba/cpython/mathimpl.py\nindex bd1d6a34056..dd3c6e88dbc 100644\n--- a/numba/cpython/mathimpl.py\n+++ b/numba/cpython/mathimpl.py\n@@ -174,6 +174,8 @@ def float_impl(context, builder, sig, args):\n \n unary_math_intr(math.fabs, 'llvm.fabs')\n exp_impl = unary_math_intr(math.exp, 'llvm.exp')\n+if sys.version_info >= (3, 11):\n+    exp2_impl = unary_math_intr(math.exp2, 'llvm.exp2')\n log_impl = unary_math_intr(math.log, 'llvm.log')\n log10_impl = unary_math_intr(math.log10, 'llvm.log10')\n log2_impl = unary_math_intr(math.log2, 'llvm.log2')\ndiff --git a/numba/np/math/mathimpl.py b/numba/np/math/mathimpl.py\nindex d872b97e9ee..ded8c0adf24 100644\n--- a/numba/np/math/mathimpl.py\n+++ b/numba/np/math/mathimpl.py\n@@ -176,6 +176,8 @@ def float_impl(context, builder, sig, args):\n \n unary_math_intr(math.fabs, 'llvm.fabs')\n exp_impl = unary_math_intr(math.exp, 'llvm.exp')\n+if sys.version_info >= (3, 11):\n+    exp2_impl = unary_math_intr(math.exp2, 'llvm.exp2')\n log_impl = unary_math_intr(math.log, 'llvm.log')\n log10_impl = unary_math_intr(math.log10, 'llvm.log10')\n sin_impl = unary_math_intr(math.sin, 'llvm.sin')\ndiff --git a/numba/tests/test_mathlib.py b/numba/tests/test_mathlib.py\nindex 82863574ef4..81a6edd25b1 100644\n--- a/numba/tests/test_mathlib.py\n+++ b/numba/tests/test_mathlib.py\n@@ -9,6 +9,7 @@\n from numba import njit, types\n from numba.tests.support import TestCase\n from numba.np import numpy_support\n+from numba.core.utils import PYVERSION\n \n \n def sin(x):\n@@ -74,6 +75,8 @@ def npy_sqrt(x):\n def exp(x):\n     return math.exp(x)\n \n+def exp2(x):\n+    return math.exp2(x)\n \n def expm1(x):\n     return math.expm1(x)\n@@ -261,6 +264,15 @@ def test_exp(self):\n         x_values = [-2, -1, -2, 2, 1, 2, .1, .2]\n         self.run_unary(pyfunc, x_types, x_values)\n \n+    @unittest.skipUnless(PYVERSION >= (3, 11), \"needs Python 3.11+\")\n+    def test_exp2(self):\n+        pyfunc = exp2\n+        x_types = [types.int16, types.int32, types.int64,\n+                   types.uint16, types.uint32, types.uint64,\n+                   types.float32, types.float64]\n+        x_values = [-2, -1, -2, 2, 1, 2, .1, .2]\n+        self.run_unary(pyfunc, x_types, x_values)\n+\n     def test_expm1(self):\n         pyfunc = expm1\n         x_types = [types.int16, types.int32, types.int64,\n",
+    "language": "Python",
+    "merged_at": "2025-10-24T15:49:59Z",
+    "pr_number": 10276,
+    "repo": "numba/numba",
+    "task_id": "numba__10276",
+    "title": "add support for `math.exp2`",
+    "variant": "verb_pad2x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "numba__10276",
+  "variant": "verb_pad2x"
+}

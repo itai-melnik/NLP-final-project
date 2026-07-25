@@ -1,0 +1,6127 @@
+{
+  "blocking_failures": [
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.82 target=0.5 band=[0.40,0.60] words=14/17",
+      "passed": false,
+      "task_id": "coreos-assembler__4359",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.79 target=0.5 band=[0.40,0.60] words=34/43",
+      "passed": false,
+      "task_id": "espnet__6248",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.96 target=0.5 band=[0.40,0.60] words=54/56",
+      "passed": false,
+      "task_id": "openbao__1906",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.06 target=0.5 band=[0.40,0.60] words=38/36",
+      "passed": false,
+      "task_id": "zod__5672",
+      "variant": "verb_terse"
+    }
+  ],
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=21/35",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=2.34 target=2.0 band=[1.60,2.40] words=82/35",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.77 target=4.0 band=[3.20,4.80] words=132/35",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "agents__4846",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=28/47",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.62 target=2.0 band=[1.60,2.40] words=76/47",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.23 target=4.0 band=[3.20,4.80] words=152/47",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "chia-blockchain__20099",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.82 target=0.5 band=[0.40,0.60] words=14/17",
+      "passed": false,
+      "task_id": "coreos-assembler__4359",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.76 target=2.0 band=[1.60,2.40] words=30/17",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=4.76 target=4.0 band=[3.20,4.80] words=81/17",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "coreos-assembler__4359",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.59 target=0.5 band=[0.40,0.60] words=57/96",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.72 target=2.0 band=[1.60,2.40] words=165/96",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.26 target=4.0 band=[3.20,4.80] words=313/96",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12106",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.89 target=0.5 band=[0.40,0.60] words=17/19 (short_desc: exempt, non-blocking)",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.74 target=2.0 band=[1.60,2.40] words=33/19",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.42 target=4.0 band=[3.20,4.80] words=65/19",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12144",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.59 target=0.5 band=[0.40,0.60] words=35/59",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.61 target=2.0 band=[1.60,2.40] words=95/59",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.39 target=4.0 band=[3.20,4.80] words=200/59",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "dask__12221",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.58 target=0.5 band=[0.40,0.60] words=147/254",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.67 target=2.0 band=[1.60,2.40] words=423/254",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.20 target=4.0 band=[3.20,4.80] words=813/254",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "deepchem__4601",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.79 target=0.5 band=[0.40,0.60] words=34/43",
+      "passed": false,
+      "task_id": "espnet__6248",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=2.02 target=2.0 band=[1.60,2.40] words=87/43",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.23 target=4.0 band=[3.20,4.80] words=139/43",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "espnet__6248",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=231/388",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.60 target=2.0 band=[1.60,2.40] words=622/388",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.21 target=4.0 band=[3.20,4.80] words=1244/388",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2540",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.58 target=0.5 band=[0.40,0.60] words=225/386",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.64 target=2.0 band=[1.60,2.40] words=632/386",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.21 target=4.0 band=[3.20,4.80] words=1238/386",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2572",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.55 target=0.5 band=[0.40,0.60] words=209/380",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.61 target=2.0 band=[1.60,2.40] words=611/380",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.20 target=4.0 band=[3.20,4.80] words=1216/380",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "falcon__2581",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=30/50",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.84 target=2.0 band=[1.60,2.40] words=92/50",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.52 target=4.0 band=[3.20,4.80] words=176/50",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "linkding__1261",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.59 target=0.5 band=[0.40,0.60] words=51/87",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.75 target=2.0 band=[1.60,2.40] words=152/87",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.32 target=4.0 band=[3.20,4.80] words=289/87",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "litgpt__2188",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=63/105",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.66 target=2.0 band=[1.60,2.40] words=174/105",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.36 target=4.0 band=[3.20,4.80] words=353/105",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "mycli__1517",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=84/140",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.65 target=2.0 band=[1.60,2.40] words=231/140",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.20 target=4.0 band=[3.20,4.80] words=448/140",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "nessie__11676",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.70 target=0.5 band=[0.40,0.60] words=7/10 (short_desc: exempt, non-blocking)",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=2.40 target=2.0 band=[1.60,2.40] words=24/10",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=5.30 target=4.0 band=[3.20,4.80] words=53/10 (short_desc: exempt, non-blocking)",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10276",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=21/35",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=2.00 target=2.0 band=[1.60,2.40] words=70/35",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.80 target=4.0 band=[3.20,4.80] words=133/35",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "numba__10366",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.96 target=0.5 band=[0.40,0.60] words=54/56",
+      "passed": false,
+      "task_id": "openbao__1906",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.75 target=2.0 band=[1.60,2.40] words=98/56",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.21 target=4.0 band=[3.20,4.80] words=180/56",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "openbao__1906",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.55 target=0.5 band=[0.40,0.60] words=21/38",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.97 target=2.0 band=[1.60,2.40] words=75/38",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.53 target=4.0 band=[3.20,4.80] words=134/38",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "pipecat__2735",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.58 target=0.5 band=[0.40,0.60] words=19/33",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.85 target=2.0 band=[1.60,2.40] words=61/33",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.64 target=4.0 band=[3.20,4.80] words=120/33",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__630",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.56 target=0.5 band=[0.40,0.60] words=22/39",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.95 target=2.0 band=[1.60,2.40] words=76/39",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.62 target=4.0 band=[3.20,4.80] words=141/39",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "protocompile__645",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=174/291",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.61 target=2.0 band=[1.60,2.40] words=468/291",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.22 target=4.0 band=[3.20,4.80] words=938/291",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9606",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=229/384",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.61 target=2.0 band=[1.60,2.40] words=618/384",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.22 target=4.0 band=[3.20,4.80] words=1238/384",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9702",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=266/444",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.60 target=2.0 band=[1.60,2.40] words=712/444",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.20 target=4.0 band=[3.20,4.80] words=1421/444",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9718",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=211/353",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.63 target=2.0 band=[1.60,2.40] words=575/353",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.20 target=4.0 band=[3.20,4.80] words=1131/353",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "prowler__9865",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=31/52",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.85 target=2.0 band=[1.60,2.40] words=96/52",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.40 target=4.0 band=[3.20,4.80] words=177/52",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "qutebrowser__8845",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=366/611",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.65 target=2.0 band=[1.60,2.40] words=1006/611",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.20 target=4.0 band=[3.20,4.80] words=1957/611",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "ratelimit__996",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.59 target=0.5 band=[0.40,0.60] words=76/129",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.79 target=2.0 band=[1.60,2.40] words=231/129",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.28 target=4.0 band=[3.20,4.80] words=423/129",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "redis-py__3949",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=102/170",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.60 target=2.0 band=[1.60,2.40] words=272/170",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.21 target=4.0 band=[3.20,4.80] words=545/170",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "sqlfluff__7499",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=67/112",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.62 target=2.0 band=[1.60,2.40] words=181/112",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.24 target=4.0 band=[3.20,4.80] words=363/112",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8953",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.83 target=0.5 band=[0.40,0.60] words=15/18 (short_desc: exempt, non-blocking)",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=2.00 target=2.0 band=[1.60,2.40] words=36/18",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.89 target=4.0 band=[3.20,4.80] words=70/18",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__8985",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=43/72",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.71 target=2.0 band=[1.60,2.40] words=123/72",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.22 target=4.0 band=[3.20,4.80] words=232/72",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9026",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.41 target=0.5 band=[0.40,0.60] words=147/356",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.64 target=2.0 band=[1.60,2.40] words=583/356",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.24 target=4.0 band=[3.20,4.80] words=1152/356",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "stylelint__9062",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=33/55",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.60 target=2.0 band=[1.60,2.40] words=88/55",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.27 target=4.0 band=[3.20,4.80] words=180/55",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "vega__4219",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.58 target=0.5 band=[0.40,0.60] words=124/212",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.72 target=2.0 band=[1.60,2.40] words=365/212",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.36 target=4.0 band=[3.20,4.80] words=712/212",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9152",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=173/289",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.62 target=2.0 band=[1.60,2.40] words=467/289",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.22 target=4.0 band=[3.20,4.80] words=930/289",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9512",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.49 target=0.5 band=[0.40,0.60] words=268/548",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.60 target=2.0 band=[1.60,2.40] words=877/548",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.34 target=4.0 band=[3.20,4.80] words=1833/548",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "vitest__9521",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=0.60 target=0.5 band=[0.40,0.60] words=18/30",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.77 target=2.0 band=[1.60,2.40] words=53/30",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.37 target=4.0 band=[3.20,4.80] words=101/30",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "wakatime-cli__1245",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.00 target=0.5 band=[0.40,0.60] words=2/2 (short_desc: exempt, non-blocking)",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.50 target=2.0 band=[1.60,2.40] words=3/2 (short_desc: exempt, non-blocking)",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": false,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=4.00 target=4.0 band=[3.20,4.80] words=8/2",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5578",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "baseline"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.06 target=0.5 band=[0.40,0.60] words=38/36",
+      "passed": false,
+      "task_id": "zod__5672",
+      "variant": "verb_terse"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.61 target=2.0 band=[1.60,2.40] words=58/36",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "verb_pad2x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.36 target=4.0 band=[3.20,4.80] words=121/36",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "verb_pad4x"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "repo_masked"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "origin_claude"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "origin_gpt"
+    },
+    {
+      "blocking": true,
+      "check": "diff_section_multiset_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": false,
+      "check": "diff_order_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "order_rev"
+    },
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "placebo"
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "placebo"
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true,
+      "task_id": "zod__5672",
+      "variant": "placebo"
+    }
+  ],
+  "config_hash": "a113de90e95f4056bade0035681e58b1c0d85473a280afd899cd083308284d89",
+  "construction_model": "claude-opus-4-8",
+  "mock_construction": false,
+  "n_blocking_failures": 4,
+  "n_checks": 760,
+  "n_prs": 40,
+  "n_variants_written": 360,
+  "prompt_version": "cc-v1",
+  "version": "v1"
+}

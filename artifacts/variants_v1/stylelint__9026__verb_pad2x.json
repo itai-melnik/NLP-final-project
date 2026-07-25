@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.71 target=2.0 band=[1.60,2.40] words=123/72",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "<!-- Each pull request must be associated with an open issue unless it happens to be a documentation fix. If a corresponding issue does not already exist, then please go ahead and create one so that we are able to discuss the change first. -->\n\n<!-- Please take a moment to answer the following questions below. We do end up closing pull requests that don't go and answer them. -->\n\n> Which issue, if any, is this issue related to?\n\nCloses https://github.com/stylelint/stylelint/issues/9025\n\n> Is there anything at all in the PR that happens to need any further explanation?\n\nNo, there isn't anything at all here — it is, exactly as it stands right now, entirely and completely self-explanatory all on its very own.",
+    "diff_patch": "diff --git a/.changeset/gentle-moles-refuse.md b/.changeset/gentle-moles-refuse.md\nnew file mode 100644\nindex 0000000000..8157b2b1e1\n--- /dev/null\n+++ b/.changeset/gentle-moles-refuse.md\n@@ -0,0 +1,5 @@\n+---\n+\"stylelint\": minor\n+---\n+\n+Fixed: `no-invalid-position-at-import-rule` false negatives for layers with blocks\ndiff --git a/lib/rules/no-invalid-position-at-import-rule/__tests__/index.mjs b/lib/rules/no-invalid-position-at-import-rule/__tests__/index.mjs\nindex 6157de7443..924c012c52 100644\n--- a/lib/rules/no-invalid-position-at-import-rule/__tests__/index.mjs\n+++ b/lib/rules/no-invalid-position-at-import-rule/__tests__/index.mjs\n@@ -78,6 +78,18 @@ testRule({\n \t\t\tendLine: 2,\n \t\t\tendColumn: 23,\n \t\t},\n+\t\t{\n+\t\t\tcode: stripIndent`\n+\t\t\t\t@layer foo {}\n+\t\t\t\t@import url('foo.css');\n+\t\t\t`,\n+\t\t\tmessage: messages.rejected,\n+\t\t\tdescription: 'layer block before import',\n+\t\t\tline: 2,\n+\t\t\tcolumn: 1,\n+\t\t\tendLine: 2,\n+\t\t\tendColumn: 23,\n+\t\t},\n \t\t{\n \t\t\tcode: stripIndent`\n \t\t\t\t@media print {}\ndiff --git a/lib/rules/no-invalid-position-at-import-rule/index.mjs b/lib/rules/no-invalid-position-at-import-rule/index.mjs\nindex e648281b08..16c917c456 100644\n--- a/lib/rules/no-invalid-position-at-import-rule/index.mjs\n+++ b/lib/rules/no-invalid-position-at-import-rule/index.mjs\n@@ -46,7 +46,7 @@ const rule = (primary, secondaryOptions) => {\n \t\t\t\t(isAtRule(node) &&\n \t\t\t\t\tnodeName !== 'charset' &&\n \t\t\t\t\tnodeName !== 'import' &&\n-\t\t\t\t\tnodeName !== 'layer' &&\n+\t\t\t\t\t!(nodeName === 'layer' && typeof node.nodes === 'undefined') &&\n \t\t\t\t\t!optionsMatches(secondaryOptions, 'ignoreAtRules', node.name) &&\n \t\t\t\t\tisStandardSyntaxAtRule(node)) ||\n \t\t\t\t(node.type === 'rule' && isStandardSyntaxRule(node))\n",
+    "language": "JavaScript",
+    "merged_at": "2026-02-05T18:40:06Z",
+    "pr_number": 9026,
+    "repo": "stylelint/stylelint",
+    "task_id": "stylelint__9026",
+    "title": "Fix `no-invalid-position-at-import-rule` false negatives for layers with blocks",
+    "variant": "verb_pad2x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "stylelint__9026",
+  "variant": "verb_pad2x"
+}
