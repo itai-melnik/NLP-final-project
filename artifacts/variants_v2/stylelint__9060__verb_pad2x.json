@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.77 target=2.0 band=[1.60,2.40] words=129/73",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "<!-- Every single pull request that comes in must be one that is associated with an open issue, and the one exception to that is if it happens to be a documentation fix. If it turns out that a corresponding issue does not already exist somewhere, then please go ahead and create one, so that we are able to have a discussion about the change first before anything else happens. -->\n\n<!-- Please go ahead and answer each of the following. We do close the pull requests that don't. -->\n\n> Which issue, if any, is this issue related to?\n\nThis one here is part of https://github.com/stylelint/stylelint/issues/6869\n\n> Is there anything in the PR that needs further explanation?\n\nNo, there is not anything of that sort; it is self-explanatory.",
+    "diff_patch": "diff --git a/.changeset/brave-clouds-argue.md b/.changeset/brave-clouds-argue.md\nnew file mode 100644\nindex 0000000000..0741c99052\n--- /dev/null\n+++ b/.changeset/brave-clouds-argue.md\n@@ -0,0 +1,5 @@\n+---\n+\"stylelint\": patch\n+---\n+\n+Fixed: `time-min-milliseconds` performance\ndiff --git a/lib/rules/time-min-milliseconds/index.mjs b/lib/rules/time-min-milliseconds/index.mjs\nindex bcf0090bdb..68d9324a22 100644\n--- a/lib/rules/time-min-milliseconds/index.mjs\n+++ b/lib/rules/time-min-milliseconds/index.mjs\n@@ -23,6 +23,8 @@ const meta = {\n \n const DELAY_PROPERTIES = new Set(['animation-delay', 'transition-delay']);\n \n+const HAS_TIME = /\\dm?s/i;\n+\n /** @type {import('stylelint').CoreRules[ruleName]} */\n const rule = (primary, secondaryOptions) => {\n \treturn (root, result) => {\n@@ -50,8 +52,12 @@ const rule = (primary, secondaryOptions) => {\n \t\tconst ignoreDelay = optionsMatches(secondaryOptions, 'ignore', 'delay');\n \n \t\troot.walkDecls((decl) => {\n-\t\t\tconst propertyName = vendor.unprefixed(decl.prop.toLowerCase());\n \t\t\tconst propertyValue = decl.value;\n+\n+\t\t\tif (!HAS_TIME.test(propertyValue)) return;\n+\n+\t\t\tconst propertyName = vendor.unprefixed(decl.prop.toLowerCase());\n+\n \t\t\tconst parsedValue = valueParser(getDeclarationValue(decl));\n \t\t\tlet timeValueCount = 0;\n \n",
+    "language": "JavaScript",
+    "merged_at": "2026-02-11T16:27:34Z",
+    "pr_number": 9060,
+    "repo": "stylelint/stylelint",
+    "task_id": "stylelint__9060",
+    "title": "Fix `time-min-milliseconds` performance",
+    "variant": "verb_pad2x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "stylelint__9060",
+  "variant": "verb_pad2x"
+}

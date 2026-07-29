@@ -1,0 +1,35 @@
+{
+  "axis": "origin",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true,
+    "trailer": "Co-Authored-By: Claude <noreply@anthropic.com>"
+  },
+  "judge_input": {
+    "description": "This PR introduces three changes to make the pg package more compatible with Deno while\r\nkeeping full Node.js functionality:\r\n\r\n1. **Default user value**  \r\n   - Replace `user: process.platform === 'win32' ? process.env.USERNAME : process.env.USER`  \r\n     with `user: 'postgres'` in defaults.\r\n   - Avoids requiring environment variables in Deno.\r\n\r\n2. **Config-first parameter resolution**  \r\n   - Update `val()` in connection-parameters.js to return `config[key]` first, before\r\n     checking environment variables.\r\n   - Prevents Deno errors when `--allow-env` is not granted.\r\n\r\n3. **Safe NODE_PG_FORCE_NATIVE check**  \r\n   - Wrap the `NODE_PG_FORCE_NATIVE` check in a `try/catch`.\r\n   - Ensures `process.env` access in Deno doesn’t throw, while preserving Node.js behavior.\r\n\r\nThese changes maintain Node.js compatibility, preserve the lazy-loading of the native module,\r\nand allow using the package in Deno without requiring `--allow-env`.\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+    "diff_patch": "diff --git a/packages/pg/lib/connection-parameters.js b/packages/pg/lib/connection-parameters.js\nindex a7b941c10..c153932bb 100644\n--- a/packages/pg/lib/connection-parameters.js\n+++ b/packages/pg/lib/connection-parameters.js\n@@ -7,6 +7,10 @@ const defaults = require('./defaults')\n const parse = require('pg-connection-string').parse // parses a connection string\n \n const val = function (key, config, envVar) {\n+  if (config[key]) {\n+    return config[key]\n+  }\n+\n   if (envVar === undefined) {\n     envVar = process.env['PG' + key.toUpperCase()]\n   } else if (envVar === false) {\n@@ -15,7 +19,7 @@ const val = function (key, config, envVar) {\n     envVar = process.env[envVar]\n   }\n \n-  return config[key] || envVar || defaults[key]\n+  return envVar || defaults[key]\n }\n \n const readSSLConfigFromEnvironment = function () {\ndiff --git a/packages/pg/lib/defaults.js b/packages/pg/lib/defaults.js\nindex 015909dcd..673696f79 100644\n--- a/packages/pg/lib/defaults.js\n+++ b/packages/pg/lib/defaults.js\n@@ -1,11 +1,18 @@\n 'use strict'\n \n+let user\n+try {\n+  user = process.platform === 'win32' ? process.env.USERNAME : process.env.USER\n+} catch {\n+  // ignore, e.g., Deno without --allow-env\n+}\n+\n module.exports = {\n   // database host. defaults to localhost\n   host: 'localhost',\n \n   // database user's name\n-  user: process.platform === 'win32' ? process.env.USERNAME : process.env.USER,\n+  user,\n \n   // name of database to connect\n   database: undefined,\ndiff --git a/packages/pg/lib/index.js b/packages/pg/lib/index.js\nindex 5bd73385b..e8b746149 100644\n--- a/packages/pg/lib/index.js\n+++ b/packages/pg/lib/index.js\n@@ -34,31 +34,40 @@ const PG = function (clientConstructor) {\n   this.utils = utils\n }\n \n-if (typeof process.env.NODE_PG_FORCE_NATIVE !== 'undefined') {\n-  module.exports = new PG(require('./native'))\n-} else {\n-  module.exports = new PG(Client)\n+let clientConstructor = Client\n \n-  // lazy require native module...the native module may not have installed\n-  Object.defineProperty(module.exports, 'native', {\n-    configurable: true,\n-    enumerable: false,\n-    get() {\n-      let native = null\n-      try {\n-        native = new PG(require('./native'))\n-      } catch (err) {\n-        if (err.code !== 'MODULE_NOT_FOUND') {\n-          throw err\n-        }\n+let forceNative = false\n+try {\n+  forceNative = !!process.env.NODE_PG_FORCE_NATIVE\n+} catch {\n+  // ignore, e.g., Deno without --allow-env\n+}\n+\n+if (forceNative) {\n+  clientConstructor = require('./native')\n+}\n+\n+module.exports = new PG(clientConstructor)\n+\n+// lazy require native module...the native module may not have installed\n+Object.defineProperty(module.exports, 'native', {\n+  configurable: true,\n+  enumerable: false,\n+  get() {\n+    let native = null\n+    try {\n+      native = new PG(require('./native'))\n+    } catch (err) {\n+      if (err.code !== 'MODULE_NOT_FOUND') {\n+        throw err\n       }\n+    }\n \n-      // overwrite module.exports.native so that getter is never called again\n-      Object.defineProperty(module.exports, 'native', {\n-        value: native,\n-      })\n+    // overwrite module.exports.native so that getter is never called again\n+    Object.defineProperty(module.exports, 'native', {\n+      value: native,\n+    })\n \n-      return native\n-    },\n-  })\n-}\n+    return native\n+  },\n+})\n",
+    "language": "JavaScript",
+    "merged_at": "2026-01-14T22:26:31Z",
+    "pr_number": 3547,
+    "repo": "brianc/node-postgres",
+    "task_id": "node-postgres__3547",
+    "title": "Improve Deno compatibility: config-first and safe env access",
+    "variant": "origin_claude"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "node-postgres__3547",
+  "variant": "origin_claude"
+}

@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=2.00 target=2.0 band=[1.60,2.40] words=360/180",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "## Hey, I just made a Pull Request!\n\n<!-- Please go ahead and describe the thing that you added here, and then, if it happens to be possible for you to do so, please also add in a screenshot of it as well.\n     The reason for asking is that doing that is what makes it easier for everyone to understand the change that has been made, and that in turn is what lets us :shipit: faster than we otherwise would. -->\nClosses:\n- #32429 \n\nWent ahead and updated the `ScheduledTasksContent` component, and the whole point of updating it was so that it would provide better visual feedback than it did before, specifically in that situation where a user turns out to be lacking the permission that is needed in order to trigger a scheduled task. What this particular change does is that it introduces a `CreateNotAllowed` component of its own, and that component is one that goes ahead and displays a disabled block icon, and along with that icon there is a descriptive tooltip as well. That component is the thing that is now being used as the `errorPage` prop over inside of the `RequirePermission` wrapper.\n\nAdditional changes:\n- Went and centered the Actions column as it sits in the tasks table, and the reason for doing that was for the sake of better UI alignment.\n- Added in a changeset, and that changeset is there for the patch release.\n\n<img width=\"1829\" height=\"787\" alt=\"image\" src=\"https://github.com/user-attachments/assets/fbff2991-7445-4e71-b544-1dd179335074\" />\n\n#### :heavy_check_mark: Checklist\n\n<!--- Please go ahead and include each of the following things in your Pull Request, doing so in whichever cases they happen to be applicable: -->\n\n- [x] A changeset that describes the change itself along with the packages that end up being affected by it. ([more info](https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md#creating-changesets))\n- [ ] Documentation that has either been added or else updated\n- [x] Tests covering the new functionality, along with regression tests for any of the bug fixes\n- [x] Screenshots that have been attached (for the changes that are UI changes)\n- [x] Every single one of your commits has a `Signed-off-by` line sitting in the message of it. ([more info](https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md#developer-certificate-of-origin))",
+    "diff_patch": "diff --git a/.changeset/small-jars-lick.md b/.changeset/small-jars-lick.md\nnew file mode 100644\nindex 00000000000000..b2160eb7f7afdc\n--- /dev/null\n+++ b/.changeset/small-jars-lick.md\n@@ -0,0 +1,5 @@\n+---\n+'@backstage/plugin-devtools': patch\n+---\n+\n+Fixes an issue where a user lacking permission to schedule tasks can now easily see the issue through a custom icon + tooltip.\ndiff --git a/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx b/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\nindex 2d4abd56ef7eab..7517cf8ea5d551 100644\n--- a/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\n+++ b/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\n@@ -35,6 +35,7 @@ import { alertApiRef, configApiRef, useApi } from '@backstage/core-plugin-api';\n import RefreshIcon from '@material-ui/icons/Refresh';\n import NightsStay from '@material-ui/icons/NightsStay';\n import ErrorIcon from '@material-ui/icons/Error';\n+import BlockIcon from '@material-ui/icons/Block';\n import CircularProgress from '@material-ui/core/CircularProgress';\n import { ScheduledTaskDetailPanel } from './ScheduledTaskDetailedPanel';\n import { RequirePermission } from '@backstage/plugin-permission-react';\n@@ -89,6 +90,12 @@ const StatusDisplay = ({\n   </Box>\n );\n \n+const CreateNotAllowed = () => (\n+  <Tooltip title=\"You are not allowed to perform this action\">\n+    <BlockIcon color=\"disabled\" />\n+  </Tooltip>\n+);\n+\n /** @public */\n export const ScheduledTasksContent = () => {\n   const classes = useStyles();\n@@ -198,7 +205,10 @@ export const ScheduledTasksContent = () => {\n     {\n       title: 'Actions',\n       render: (rowData: TaskApiTasksResponse) => (\n-        <RequirePermission permission={devToolsTaskSchedulerCreatePermission}>\n+        <RequirePermission\n+          permission={devToolsTaskSchedulerCreatePermission}\n+          errorPage={<CreateNotAllowed />}\n+        >\n           <Tooltip title=\"Run Task\">\n             <IconButton\n               aria-label=\"Trigger\"\n@@ -225,6 +235,7 @@ export const ScheduledTasksContent = () => {\n       ),\n       sorting: false,\n       width: '10%',\n+      align: 'center',\n     },\n   ];\n \n",
+    "language": "TypeScript",
+    "merged_at": "2026-01-23T15:26:14Z",
+    "pr_number": 32466,
+    "repo": "backstage/backstage",
+    "task_id": "backstage__32466",
+    "title": "fix(devtools): improve permission feedback in ScheduledTasksContent",
+    "variant": "verb_pad2x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "backstage__32466",
+  "variant": "verb_pad2x"
+}

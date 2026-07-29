@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.75 target=2.0 band=[1.60,2.40] words=128/73",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "- improve the error handling so that it goes ahead and logs each and every one of the error types\n\nAdd in an error frame, and do that for all of the error types that are listed over at https://elevenlabs.io/docs/developers/guides/cookbooks/speech-to-text/streaming#error-handling \n\n- fix the issue that comes up with the infinite loop in the case when the websocket disconnects\nExplanation: the [_receive_messages](https://github.com/pipecat-ai/pipecat/blob/7e424d750ebee48d8ff8af6f009b8257acd41dc5/src/pipecat/services/elevenlabs/stt.py#L693) method is one that gets executed inside of a loop that makes an attempt to reconnect whenever there is an error, but the eleven labs implementation had a try catch sitting in it, and the consequence of that is that if the websocket happens to randomly disconnect then this particular part goes off into an infinite loop, and that in turn blocks the whole process entirely.\n\nhttps://github.com/pipecat-ai/pipecat/blob/7e424d750ebee48d8ff8af6f009b8257acd41dc5/src/pipecat/services/websocket_service.py#L133-L154",
+    "diff_patch": "diff --git a/changelog/3233.fixed.md b/changelog/3233.fixed.md\nnew file mode 100644\nindex 0000000000..3f17fd765a\n--- /dev/null\n+++ b/changelog/3233.fixed.md\n@@ -0,0 +1,2 @@\n+- Improved error handling in `ElevenLabsRealtimeSTTService`\n+- Fixed an issue in `ElevenLabsRealtimeSTTService` causing an infinite loop that blocks the process if the websocket disconnects due to an error\n\\ No newline at end of file\ndiff --git a/src/pipecat/services/elevenlabs/stt.py b/src/pipecat/services/elevenlabs/stt.py\nindex 5fa04d1c1f..8169faa99d 100644\n--- a/src/pipecat/services/elevenlabs/stt.py\n+++ b/src/pipecat/services/elevenlabs/stt.py\n@@ -690,8 +690,8 @@ def _get_websocket(self):\n             return self._websocket\n         raise Exception(\"Websocket not connected\")\n \n-    async def _process_messages(self):\n-        \"\"\"Process incoming WebSocket messages.\"\"\"\n+    async def _receive_messages(self):\n+        \"\"\"Continuously receive and process WebSocket messages.\"\"\"\n         async for message in self._get_websocket():\n             try:\n                 data = json.loads(message)\n@@ -700,13 +700,6 @@ async def _process_messages(self):\n                 logger.warning(f\"Received non-JSON message: {message}\")\n             except Exception as e:\n                 logger.error(f\"Error processing message: {e}\")\n-\n-    async def _receive_messages(self):\n-        \"\"\"Continuously receive and process WebSocket messages.\"\"\"\n-        try:\n-            await self._process_messages()\n-        except Exception as e:\n-            logger.warning(f\"{self} WebSocket connection closed: {e}\")\n             # Connection closed, will reconnect on next audio chunk\n \n     async def _process_response(self, data: dict):\n@@ -729,21 +722,24 @@ async def _process_response(self, data: dict):\n         elif message_type == \"committed_transcript_with_timestamps\":\n             await self._on_committed_transcript_with_timestamps(data)\n \n-        elif message_type == \"error\":\n-            error_msg = data.get(\"error\", \"Unknown error\")\n-            logger.error(f\"ElevenLabs error: {error_msg}\")\n+        elif message_type in (\n+            \"error\",\n+            \"auth_error\",\n+            \"quota_exceeded_error\",\n+            \"transcriber_error\",\n+            \"input_error\",\n+            \"commit_throttled\",\n+            \"transcriber_error\",\n+            \"unaccepted_terms_error\",\n+            \"rate_limited\",\n+            \"queue_overflow\",\n+            \"resource_exhausted\",\n+            \"session_time_limit_exceeded\",\n+            \"chunk_size_exceeded\",\n+            \"insufficient_audio_activity\",\n+        ):\n+            error_msg = data.get(\"error\", f\"Unknown error - {message_type}\")\n             await self.push_error(error_msg=f\"Error: {error_msg}\")\n-\n-        elif message_type == \"auth_error\":\n-            error_msg = data.get(\"error\", \"Authentication error\")\n-            logger.error(f\"ElevenLabs auth error: {error_msg}\")\n-            await self.push_error(error_msg=f\"Auth error: {error_msg}\")\n-\n-        elif message_type == \"quota_exceeded_error\":\n-            error_msg = data.get(\"error\", \"Quota exceeded\")\n-            logger.error(f\"ElevenLabs quota exceeded: {error_msg}\")\n-            await self.push_error(error_msg=f\"Quota exceeded: {error_msg}\")\n-\n         else:\n             logger.debug(f\"Unknown message type: {message_type}\")\n \n",
+    "language": "Python",
+    "merged_at": "2025-12-19T00:07:43Z",
+    "pr_number": 3233,
+    "repo": "pipecat-ai/pipecat",
+    "task_id": "pipecat__3233",
+    "title": "Improve Elevenlabs realtime transcription service",
+    "variant": "verb_pad2x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "pipecat__3233",
+  "variant": "verb_pad2x"
+}

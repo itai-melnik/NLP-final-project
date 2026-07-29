@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage 1 — build the 9 variants per selected PR + invariance report (spec §4).
+"""Stage 1 — build the 8 variants per selected PR + invariance report (spec §4).
 
 Reads the frozen selection manifest, assembles every (task_id, variant) judge
 input, runs the per-axis invariance checks, and freezes the results. Refuses to

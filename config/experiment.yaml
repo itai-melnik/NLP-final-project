@@ -23,8 +23,16 @@ seed: 20260723           # master seed; per-task seeds derived from (seed, task_
 selection:
   min_description_chars: 20        # after strip()
   max_diff_chars: 30000            # ~7.5k tokens
-  min_file_sections: 2             # >= 2 files in the diff
-  require_test_nontest_mix: true   # both a test file and a non-test file present
+  min_file_sections: 2             # >= 2 files in the diff (non-trivial changes)
+  # v2 (spec §8, 2026-07-29): pool restricted to Type1_Direct — the judge sees
+  # only the diff, and Type1 issues are directly visible in the changed hunks,
+  # so the checklist is fully answerable from the judge's input. Type2/Type3
+  # ground truth is partly invisible to the instrument.
+  require_difficulty: Type1_Direct
+  # v2: the test/non-test-mix filter existed solely to make the dropped
+  # order_rev axis (tests-position contrast) well-defined; without it the
+  # Type1 pool is n=30 instead of n=12.
+  require_test_nontest_mix: false
   short_description_chars: 150     # PRs below this get short_desc flag (verbosity sensitivity)
   # AI/bot-authorship screen (spec §3 filter 4): identified during design,
   # applied as an explicit drop-list so selection is fully deterministic.
@@ -37,8 +45,10 @@ selection:
 # Stage 1 — variant construction (spec §4)
 # ---------------------------------------------------------------------------
 variants:
-  # The 9-variant matrix is fixed in code (src/prjudge/variants.py); listed
-  # here for reference / run-selection filtering.
+  # The 8-variant matrix is fixed in code (src/prjudge/variants.py); listed
+  # here for reference / run-selection filtering. order_rev was dropped in v2
+  # (spec §8, 2026-07-29): weakest axis (single binary flip, no dose structure)
+  # and the only consumer of the test/non-test-mix selection filter.
   ids:
     - baseline
     - verb_terse
@@ -47,7 +57,6 @@ variants:
     - repo_masked
     - origin_claude
     - origin_gpt
-    - order_rev
     - placebo
   repo_mask_token: "project/repo"
   origin_claude_trailer: "Co-Authored-By: Claude <noreply@anthropic.com>"
@@ -67,9 +76,22 @@ variants:
   # without dropping facts. Their verb_terse ratio check is non-blocking, and
   # they are excluded from the terse arm of the dose-response analysis
   # (alongside short_desc PRs). Pre-registered before any judging.
+  # espnet__6248 is retained from v1 but no longer selected (Type2, out of the
+  # v2 pool); any v2-pool additions must be registered before judging starts.
+  # The six v2-pool entries were registered 2026-07-29 when the cc-v1 rewrites
+  # were authored — before any v2 judging — each with its measured floor ratio,
+  # i.e. the closest fact-preserving compression the rules allow. The Type1_Direct
+  # pool is shorter and more structure-dense than v1, so fixed scaffolding
+  # (tables, git metadata, template headings) dominates more descriptions.
   terse_waivers:
+    - agents__4713                 # floor 0.77: description is only the Devin review badge markup
     - coreos-assembler__4359       # 17 words: QMP JSON command + issue URL
-    - espnet__6248                 # 18 of 43 words are template headings
+    - coreos-assembler__4386       # floor 0.69: 76 of 212 words are verbatim commit headers + subjects
+    - effect__5952                 # floor 0.79: headings + error code fence + bullets = 26 of a 50-word ceiling
+    - espnet__6248                 # 18 of 43 words are template headings (v1 pool only)
+    - espnet__6325                 # floor 0.89: CER table alone is 108 words (142 fixed vs a 181-word ceiling)
+    - espnet__6356                 # floor 0.76: 30 of 76 words are template headings, rules, and a URL
+    - node-postgres__3547          # floor 0.68: long code spans (replaced default is 8 words alone)
     - openbao__1906                # 27 of 56 words are a fenced terminal transcript
     - zod__5672                    # inline JSON examples dominate
 
@@ -149,8 +171,10 @@ judging:
       context_window: 1050000
       env_key: OPENAI_API_KEY
 
-  # Final full-matrix run spec (40 PRs x 9 variants x 2 judges x 3 trials = 2,160).
-  final_run_name: results_v1
+  # Final full-matrix run spec (30 PRs x 8 variants x 2 judges x 3 trials = 1,440).
+  # results_v1 (40-PR/9-variant matrix) was abandoned before analysis when the
+  # pool was restricted to Type1_Direct (spec §8, 2026-07-29).
+  final_run_name: results_v2
 
   # Batch mode (--batch on script 02): 50% off input+output tokens vs sync, same
   # models, <=24h completion window. Any future openai_compatible judge (no
@@ -164,7 +188,7 @@ judging:
 # Versions stamped into artifacts (bump on any breaking change)
 # ---------------------------------------------------------------------------
 versions:
-  selection: v1
-  variants: v1
+  selection: v2                   # v2 2026-07-29: Type1_Direct-only pool, n=30 (spec §8)
+  variants: v2                    # v2 2026-07-29: order_rev dropped, 8-variant matrix (spec §8)
   prompt: v3                      # judge system prompt (see prompts.py registry)
-  results: v1
+  results: v2

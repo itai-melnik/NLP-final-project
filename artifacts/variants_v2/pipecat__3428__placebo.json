@@ -1,0 +1,40 @@
+{
+  "axis": "placebo",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true
+  },
+  "judge_input": {
+    "description": "#### Please describe the changes in your PR. If it is addressing an issue, please reference that as well.\r\n\r\nWe had a trickle of community PRs finding issues:\r\n- LLM: https://github.com/pipecat-ai/pipecat/pull/3422\r\n- STT: https://github.com/pipecat-ai/pipecat/pull/3351\r\n\r\nThis applies the same fix for TTS, OpenAI Realtime, Gemini Live.\r\n\r\nUpdating changelogs to be consistent, too.",
+    "diff_patch": "diff --git a/changelog/3351.fixed.md b/changelog/3351.fixed.md\nnew file mode 100644\nindex 0000000000..2792839cb0\n--- /dev/null\n+++ b/changelog/3351.fixed.md\n@@ -0,0 +1 @@\n+- Fixed an issue in `traced_stt` where `model_name` in OpenTelemetry appears as `unknown`.\ndiff --git a/changelog/3422.fixed.md b/changelog/3422.fixed.md\nindex 31b1d93c97..fa34d9262b 100644\n--- a/changelog/3422.fixed.md\n+++ b/changelog/3422.fixed.md\n@@ -1 +1 @@\n-- Fixed a bug in `traced_llm` where the model name in opentelemetry is shown unknown even though it is defined.\n+- Fixed an issue in `traced_llm` where `model_name` in OpenTelemetry appears as `unknown`.\ndiff --git a/changelog/3428.fixed.md b/changelog/3428.fixed.md\nnew file mode 100644\nindex 0000000000..e82ff082e8\n--- /dev/null\n+++ b/changelog/3428.fixed.md\n@@ -0,0 +1 @@\n+- Fixed an issue in `traced_tts`, `traced_gemini_live`, and `traced_openai_realtime` where `model_name` in OpenTelemetry appears as `unknown`.\ndiff --git a/src/pipecat/utils/tracing/service_decorators.py b/src/pipecat/utils/tracing/service_decorators.py\nindex 5bcfbd4427..68dda65624 100644\n--- a/src/pipecat/utils/tracing/service_decorators.py\n+++ b/src/pipecat/utils/tracing/service_decorators.py\n@@ -186,7 +186,7 @@ async def tracing_context(self, text):\n                     add_tts_span_attributes(\n                         span=span,\n                         service_name=service_class_name,\n-                        model=getattr(self, \"model_name\", \"unknown\"),\n+                        model=getattr(self, \"model_name\") or \"unknown\",\n                         voice_id=getattr(self, \"_voice_id\", \"unknown\"),\n                         text=text,\n                         settings=getattr(self, \"_settings\", {}),\n@@ -585,8 +585,10 @@ async def wrapper(self, *args, **kwargs):\n                 ) as current_span:\n                     try:\n                         # Base service attributes\n-                        model_name = getattr(\n-                            self, \"model_name\", getattr(self, \"_model_name\", \"unknown\")\n+                        model_name = (\n+                            getattr(self, \"model_name\", None)\n+                            or getattr(self, \"_model_name\", None)\n+                            or \"unknown\"\n                         )\n                         voice_id = getattr(self, \"_voice_id\", None)\n                         language_code = getattr(self, \"_language_code\", None)\n@@ -890,8 +892,10 @@ async def wrapper(self, *args, **kwargs):\n                 ) as current_span:\n                     try:\n                         # Base service attributes\n-                        model_name = getattr(\n-                            self, \"model_name\", getattr(self, \"_model_name\", \"unknown\")\n+                        model_name = (\n+                            getattr(self, \"model_name\", None)\n+                            or getattr(self, \"_model_name\", None)\n+                            or \"unknown\"\n                         )\n \n                         # Operation-specific attribute collection\n",
+    "language": "Python",
+    "merged_at": "2020-01-01T00:00:00Z",
+    "pr_number": 99999,
+    "repo": "pipecat-ai/pipecat",
+    "task_id": "pipecat__3428",
+    "title": "Fix TTS, realtime LLM services could return unknown for model_name",
+    "variant": "placebo"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "pipecat__3428",
+  "variant": "placebo"
+}

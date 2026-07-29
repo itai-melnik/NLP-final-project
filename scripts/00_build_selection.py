@@ -19,15 +19,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from prjudge.config import load_config
 from prjudge.data import select_prs
 
-# Spec §3 known-good composition — the manifest must reproduce these exactly.
-# n=40 under strict (principled) test-file detection: spyder__24990 is excluded
-# because its only "test-looking" file (kernelspec.py) is a false positive — it
-# has no genuine test/non-test mix. See spec §3 selection note.
+# Spec §3/§8 known-good composition — the manifest must reproduce these exactly.
+# v2 (2026-07-29): pool restricted to Type1_Direct (judge-visibility validity)
+# and the test/non-test-mix filter dropped alongside the order_rev axis; the
+# eligible Type1 pool under the remaining filters is exactly these 30.
 EXPECTED = {
-    "n": 40,
-    "difficulty": {"Type1_Direct": 12, "Type2_Contextual": 15, "Type3_Latent_Candidate": 13},
-    "has_requested_changes": {"False": 27, "True": 13},
-    "n_repos": 25,
+    "n": 30,
+    "difficulty": {"Type1_Direct": 30},
+    "has_requested_changes": {"False": 26, "True": 4},
+    "n_repos": 18,
 }
 
 

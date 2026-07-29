@@ -1,4 +1,7 @@
-"""Stage 1 — the 9 perturbation constructors + per-axis invariance checks (spec §4).
+"""Stage 1 — the 8 perturbation constructors + per-axis invariance checks (spec §4).
+
+The order_rev (file-order) axis was dropped in variants v2 (spec §8,
+2026-07-29) together with the test/non-test-mix selection filter it required.
 
 Each constructor takes the baseline *judge-input fields* of one selected PR and
 returns a perturbed copy plus construction metadata. Deterministic variants are
@@ -18,7 +21,6 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from .config import Config
-from .data import DiffSection, split_diff_sections
 from .prompts import build_rewrite_messages
 
 # Canonical variant order (mirrors config.variants.ids).
@@ -30,7 +32,6 @@ VARIANT_IDS = [
     "repo_masked",
     "origin_claude",
     "origin_gpt",
-    "order_rev",
     "placebo",
 ]
 VERBOSITY_VARIANTS = ("verb_terse", "verb_pad2x", "verb_pad4x")
@@ -44,7 +45,6 @@ VARIANT_AXIS = {
     "repo_masked": "prestige",
     "origin_claude": "origin",
     "origin_gpt": "origin",
-    "order_rev": "position",
     "placebo": "placebo",
 }
 
@@ -93,12 +93,6 @@ def base_fields(rec: dict[str, Any]) -> JudgeInput:
         merged_at=rec.get("merged_at") or "",
         language=rec.get("language"),
     )
-
-
-def task_seed(config: Config, task_id: str) -> int:
-    """Deterministic per-task seed derived from (master seed, task_id)."""
-    h = hashlib.sha256(f"{config['seed']}:{task_id}".encode("utf-8")).hexdigest()
-    return int(h[:16], 16)
 
 
 def word_count(text: str) -> int:
@@ -170,21 +164,6 @@ def build_origin(base: JudgeInput, config: Config, family: str) -> tuple[JudgeIn
     v = _copy(base, f"origin_{family}")
     v.description = f"{base.description}\n\n{trailer}"
     return v, {"deterministic": True, "trailer": trailer}
-
-
-def build_order_rev(base: JudgeInput, config: Config) -> tuple[JudgeInput, dict]:
-    """Reverse the per-file diff sections; diff content is otherwise untouched."""
-    sections = split_diff_sections(base.diff_patch)
-    reversed_sections = list(reversed(sections))
-    v = _copy(base, "order_rev")
-    v.diff_patch = "".join(s.text for s in reversed_sections)
-    return v, {
-        "deterministic": True,
-        "seed": task_seed(config, base.task_id),   # provenance; reversal itself is fixed
-        "n_sections": len(sections),
-        "order_before": [s.path for s in sections],
-        "order_after": [s.path for s in reversed_sections],
-    }
 
 
 def build_placebo(base: JudgeInput, config: Config) -> tuple[JudgeInput, dict]:
@@ -288,22 +267,9 @@ def check_variant(
     axis = VARIANT_AXIS[variant.variant]
 
     # -- diff invariance ---------------------------------------------------
-    if variant.variant == "order_rev":
-        base_sections = sorted(s.text for s in split_diff_sections(baseline.diff_patch))
-        var_sections = sorted(s.text for s in split_diff_sections(variant.diff_patch))
-        ok = base_sections == var_sections
-        checks.append(Check(
-            "diff_section_multiset_identical", ok, blocking=True,
-            detail="" if ok else "reordered diff is not a pure permutation of baseline sections",
-        ))
-        # And confirm the order actually changed (unless a single-section diff).
-        changed = variant.diff_patch != baseline.diff_patch or meta.get("n_sections", 0) <= 1
-        checks.append(Check("diff_order_changed", changed, blocking=False,
-                            detail="" if changed else "order identical to baseline"))
-    else:
-        ok = variant.diff_patch == baseline.diff_patch
-        checks.append(Check("diff_byte_identical", ok, blocking=True,
-                            detail="" if ok else "diff differs from baseline"))
+    ok = variant.diff_patch == baseline.diff_patch
+    checks.append(Check("diff_byte_identical", ok, blocking=True,
+                        detail="" if ok else "diff differs from baseline"))
 
     # -- description invariance -------------------------------------------
     if variant.variant == "baseline":
@@ -386,7 +352,6 @@ DETERMINISTIC_BUILDERS: dict[str, Callable[[JudgeInput, Config], tuple[JudgeInpu
     "repo_masked": build_repo_masked,
     "origin_claude": lambda b, c: build_origin(b, c, "claude"),
     "origin_gpt": lambda b, c: build_origin(b, c, "gpt"),
-    "order_rev": build_order_rev,
     "placebo": build_placebo,
 }
 

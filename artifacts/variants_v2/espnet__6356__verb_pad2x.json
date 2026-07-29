@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.82 target=2.0 band=[1.60,2.40] words=138/76",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "## What did you change?\n\nUpdated the logic of the Whisper tokenizer so that it now goes ahead and uses `extra_special_tokens` rather than instead using `additional_special_tokens`, and this applies at the point where it is reading and adding the special tokens.\n\n---\n\n## Why did you make this change?\n\nTransformers v5 went ahead and removed `tokenization_utils_fast.py` altogether, and on top of that it also unified the tokenizer APIs together. Meanwhile, espnet/whisper was still depending on the older GPT2Tokenizer attributes, which is to say `additional_special_tokens`, and what that ended up doing was causing errors to show up with the new API. Switching things over to `extra_special_tokens` is the thing that fixes the compatibility with v5.\n\n---\n\n## Is your PR small enough?\n\nyes, it is. 2 files in total, with 4 add/deletions in them\n\n---\n\n## Additional Context\n\nhttps://github.com/huggingface/transformers/blob/main/MIGRATION_GUIDE_V5.md",
+    "diff_patch": "diff --git a/espnet2/ps2st/espnet_model.py b/espnet2/ps2st/espnet_model.py\nindex 8f97c3deb4bc..355370868bac 100644\n--- a/espnet2/ps2st/espnet_model.py\n+++ b/espnet2/ps2st/espnet_model.py\n@@ -16,12 +16,18 @@\n         AutoProcessor,\n         Qwen2AudioForConditionalGeneration,\n     )\n-    from transformers.modeling_utils import no_init_weights\n \n     is_transformers_available = True\n except ImportError:\n     is_transformers_available = False\n \n+if is_transformers_available:\n+    try:\n+        # transformers < v5\n+        from transformers.modeling_utils import no_init_weights\n+    except ImportError:\n+        from transformers.initialization import no_init_weights\n+\n \n class ESPnetQwen2AudioModel(AbsESPnetModel):\n     \"\"\"ESPnet model integrating Qwen2-Audio from transformers\"\"\"\ndiff --git a/espnet2/ps2st/qwen2_scorer.py b/espnet2/ps2st/qwen2_scorer.py\nindex a64519e07e03..ad7bc989b16d 100644\n--- a/espnet2/ps2st/qwen2_scorer.py\n+++ b/espnet2/ps2st/qwen2_scorer.py\n@@ -49,8 +49,9 @@ def score(self, ys, state, xs):\n             logits = out.logits[:, -1]\n             past_kv = out.past_key_values\n \n+            # Support both transformers V4 and V5\n             past_len = (\n-                past_kv[0][0].size(-2)\n+                past_kv.layers[0].get_seq_length()\n                 if past_kv is not None\n                 else self.prefill_input_ids.size(1)\n             )\ndiff --git a/espnet2/text/whisper_token_id_converter.py b/espnet2/text/whisper_token_id_converter.py\nindex 88d3b7476f68..659e38847986 100644\n--- a/espnet2/text/whisper_token_id_converter.py\n+++ b/espnet2/text/whisper_token_id_converter.py\n@@ -64,12 +64,20 @@ def __init__(\n         self.tokenizer = copy.deepcopy(self.tokenizer)\n         timestamps = [f\"<|{i * 30 / 1500:.2f}|>\" for i in range(0, 1501)]\n         sc = [speaker_change_symbol] if sot else []\n-        special_tokens = (\n-            self.tokenizer.tokenizer.additional_special_tokens + timestamps + sc\n-        )\n-        self.tokenizer.tokenizer.add_special_tokens(\n-            dict(additional_special_tokens=special_tokens)\n-        )\n+        # workaround for transformers v5\n+        if hasattr(self.tokenizer.tokenizer, \"additional_special_tokens\"):\n+            # For transformer < V5\n+            special_tokens = (\n+                self.tokenizer.tokenizer.additional_special_tokens + timestamps + sc\n+            )\n+            self.tokenizer.tokenizer.add_special_tokens(\n+                dict(additional_special_tokens=special_tokens)\n+            )\n+        else:\n+            # For transformer >= V5\n+            self.tokenizer.tokenizer.add_special_tokens(\n+                dict(extra_special_tokens=timestamps + sc)\n+            )\n         self.model_type = model_type\n \n     def get_num_vocabulary_size(self) -> int:\ndiff --git a/espnet2/text/whisper_tokenizer.py b/espnet2/text/whisper_tokenizer.py\nindex 0cf061cb7db5..87b2c109f405 100644\n--- a/espnet2/text/whisper_tokenizer.py\n+++ b/espnet2/text/whisper_tokenizer.py\n@@ -86,12 +86,18 @@ def __init__(\n         # Whisper uses discrete tokens (20ms) to encode timestamp\n         timestamps = [f\"<|{i * 0.02:.2f}|>\" for i in range(0, 1501)]\n         sc = [speaker_change_symbol] if sot else []\n-        special_tokens = (\n-            self.tokenizer.tokenizer.additional_special_tokens + timestamps + sc\n-        )\n-        self.tokenizer.tokenizer.add_special_tokens(\n-            dict(additional_special_tokens=special_tokens)\n-        )\n+\n+        # workaround for transformers v5\n+        if hasattr(self.tokenizer.tokenizer, \"additional_special_tokens\"):\n+            # For transformer < V5\n+            self.tokenizer.tokenizer.add_special_tokens(\n+                dict(additional_special_tokens=timestamps + sc)\n+            )\n+        else:\n+            # For transformer >= V5\n+            self.tokenizer.tokenizer.add_special_tokens(\n+                dict(extra_special_tokens=timestamps + sc)\n+            )\n \n     def __repr__(self):\n         return (\n",
+    "language": "Python",
+    "merged_at": "2026-02-04T00:39:47Z",
+    "pr_number": 6356,
+    "repo": "espnet/espnet",
+    "task_id": "espnet__6356",
+    "title": "Fix Whisper tokenizer to use extra_special_tokens for Transformers v5 compatibility",
+    "variant": "verb_pad2x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "espnet__6356",
+  "variant": "verb_pad2x"
+}

@@ -1,0 +1,35 @@
+{
+  "axis": "origin",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true,
+    "trailer": "Co-Authored-By: Claude <noreply@anthropic.com>"
+  },
+  "judge_input": {
+    "description": "<!-- Each pull request must be associated with an open issue unless it's a documentation fix. If a corresponding issue does not exist, please create one so we can discuss the change first. -->\r\n\r\n<!-- Please answer the following. We close pull requests that don't. -->\r\n\r\n> Which issue, if any, is this issue related to?\r\n\r\nPart of https://github.com/stylelint/stylelint/issues/6869\r\n\r\n> Is there anything in the PR that needs further explanation?\r\n\r\nNo, it's self-explanatory.\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+    "diff_patch": "diff --git a/.changeset/brave-clouds-argue.md b/.changeset/brave-clouds-argue.md\nnew file mode 100644\nindex 0000000000..0741c99052\n--- /dev/null\n+++ b/.changeset/brave-clouds-argue.md\n@@ -0,0 +1,5 @@\n+---\n+\"stylelint\": patch\n+---\n+\n+Fixed: `time-min-milliseconds` performance\ndiff --git a/lib/rules/time-min-milliseconds/index.mjs b/lib/rules/time-min-milliseconds/index.mjs\nindex bcf0090bdb..68d9324a22 100644\n--- a/lib/rules/time-min-milliseconds/index.mjs\n+++ b/lib/rules/time-min-milliseconds/index.mjs\n@@ -23,6 +23,8 @@ const meta = {\n \n const DELAY_PROPERTIES = new Set(['animation-delay', 'transition-delay']);\n \n+const HAS_TIME = /\\dm?s/i;\n+\n /** @type {import('stylelint').CoreRules[ruleName]} */\n const rule = (primary, secondaryOptions) => {\n \treturn (root, result) => {\n@@ -50,8 +52,12 @@ const rule = (primary, secondaryOptions) => {\n \t\tconst ignoreDelay = optionsMatches(secondaryOptions, 'ignore', 'delay');\n \n \t\troot.walkDecls((decl) => {\n-\t\t\tconst propertyName = vendor.unprefixed(decl.prop.toLowerCase());\n \t\t\tconst propertyValue = decl.value;\n+\n+\t\t\tif (!HAS_TIME.test(propertyValue)) return;\n+\n+\t\t\tconst propertyName = vendor.unprefixed(decl.prop.toLowerCase());\n+\n \t\t\tconst parsedValue = valueParser(getDeclarationValue(decl));\n \t\t\tlet timeValueCount = 0;\n \n",
+    "language": "JavaScript",
+    "merged_at": "2026-02-11T16:27:34Z",
+    "pr_number": 9060,
+    "repo": "stylelint/stylelint",
+    "task_id": "stylelint__9060",
+    "title": "Fix `time-min-milliseconds` performance",
+    "variant": "origin_claude"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "stylelint__9060",
+  "variant": "origin_claude"
+}

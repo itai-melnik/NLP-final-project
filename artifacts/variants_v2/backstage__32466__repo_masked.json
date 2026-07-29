@@ -1,0 +1,42 @@
+{
+  "axis": "prestige",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_name_substitution_only",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": false,
+      "check": "no_residual_repo_token",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true,
+    "masked_name": "backstage",
+    "masked_org": "backstage"
+  },
+  "judge_input": {
+    "description": "## Hey, I just made a Pull Request!\r\n\r\n<!-- Please describe what you added, and add a screenshot if possible.\r\n     That makes it easier to understand the change so we can :shipit: faster. -->\r\nClosses:\r\n- #32429 \r\n\r\nUpdated the `ScheduledTasksContent` component to provide better visual feedback when a user lacks permission to trigger a scheduled task. This change introduces a `CreateNotAllowed` component that displays a disabled block icon with a descriptive tooltip, which is now used as the `errorPage` prop in the `RequirePermission` wrapper.\r\n\r\nAdditional changes:\r\n- Centered the Actions column in the tasks table for better UI alignment.\r\n- Added a changeset for the patch release.\r\n\r\n<img width=\"1829\" height=\"787\" alt=\"image\" src=\"https://github.com/user-attachments/assets/fbff2991-7445-4e71-b544-1dd179335074\" />\r\n\r\n#### :heavy_check_mark: Checklist\r\n\r\n<!--- Please include the following in your Pull Request when applicable: -->\r\n\r\n- [x] A changeset describing the change and affected packages. ([more info](https://github.com/project/repo/blob/master/CONTRIBUTING.md#creating-changesets))\r\n- [ ] Added or updated documentation\r\n- [x] Tests for new functionality and regression tests for bug fixes\r\n- [x] Screenshots attached (for UI changes)\r\n- [x] All your commits have a `Signed-off-by` line in the message. ([more info](https://github.com/project/repo/blob/master/CONTRIBUTING.md#developer-certificate-of-origin))",
+    "diff_patch": "diff --git a/.changeset/small-jars-lick.md b/.changeset/small-jars-lick.md\nnew file mode 100644\nindex 00000000000000..b2160eb7f7afdc\n--- /dev/null\n+++ b/.changeset/small-jars-lick.md\n@@ -0,0 +1,5 @@\n+---\n+'@backstage/plugin-devtools': patch\n+---\n+\n+Fixes an issue where a user lacking permission to schedule tasks can now easily see the issue through a custom icon + tooltip.\ndiff --git a/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx b/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\nindex 2d4abd56ef7eab..7517cf8ea5d551 100644\n--- a/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\n+++ b/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\n@@ -35,6 +35,7 @@ import { alertApiRef, configApiRef, useApi } from '@backstage/core-plugin-api';\n import RefreshIcon from '@material-ui/icons/Refresh';\n import NightsStay from '@material-ui/icons/NightsStay';\n import ErrorIcon from '@material-ui/icons/Error';\n+import BlockIcon from '@material-ui/icons/Block';\n import CircularProgress from '@material-ui/core/CircularProgress';\n import { ScheduledTaskDetailPanel } from './ScheduledTaskDetailedPanel';\n import { RequirePermission } from '@backstage/plugin-permission-react';\n@@ -89,6 +90,12 @@ const StatusDisplay = ({\n   </Box>\n );\n \n+const CreateNotAllowed = () => (\n+  <Tooltip title=\"You are not allowed to perform this action\">\n+    <BlockIcon color=\"disabled\" />\n+  </Tooltip>\n+);\n+\n /** @public */\n export const ScheduledTasksContent = () => {\n   const classes = useStyles();\n@@ -198,7 +205,10 @@ export const ScheduledTasksContent = () => {\n     {\n       title: 'Actions',\n       render: (rowData: TaskApiTasksResponse) => (\n-        <RequirePermission permission={devToolsTaskSchedulerCreatePermission}>\n+        <RequirePermission\n+          permission={devToolsTaskSchedulerCreatePermission}\n+          errorPage={<CreateNotAllowed />}\n+        >\n           <Tooltip title=\"Run Task\">\n             <IconButton\n               aria-label=\"Trigger\"\n@@ -225,6 +235,7 @@ export const ScheduledTasksContent = () => {\n       ),\n       sorting: false,\n       width: '10%',\n+      align: 'center',\n     },\n   ];\n \n",
+    "language": "TypeScript",
+    "merged_at": "2026-01-23T15:26:14Z",
+    "pr_number": 32466,
+    "repo": "project/repo",
+    "task_id": "backstage__32466",
+    "title": "fix(devtools): improve permission feedback in ScheduledTasksContent",
+    "variant": "repo_masked"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "backstage__32466",
+  "variant": "repo_masked"
+}

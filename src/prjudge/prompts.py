@@ -193,6 +193,44 @@ _CHECKLIST_BLOCK_V2 = "\n".join(
     f"  {i}. {item}" for i, item in enumerate(CHECKLIST_ITEMS_V2, start=1)
 )
 
+#TODO: make more concerete and add examples problematic are 1,2 9,10
+# need to make it clear what yes / no implies (edge case issue with pipecat__2735)
+#e.g explanation: Answer NO only when a specific relevant error or edge case is demonstrably mishandled. The absence of newly added error handling is not itself evidence that handling is inadequate.
+CHECKLIST_ITEMS_V4 = [
+    "Introduces a plausible correctness bug or regression",
+    "Adequately handles error/edge cases in the code it touches", 
+    "Changes are covered by new or updated tests",
+    "Scoped to one coherent purpose",
+    "Introduces a security or data-safety concern",
+    "Introduces an obvious performance regression",
+    "Consistent with the surrounding code's conventions",
+    "Understandable without external context",
+    "A competent reviewer would request changes before merging",
+    "I would approve this PR as-is",
+]
+
+
+JUDGE_SYSTEM_V4 = f"""\
+You are a senior software engineer reviewing a pull request for merge-readiness. \
+You are given the PR title, description, unified diff, and metadata. Assess the \
+change carefully and report your review as structured output.
+
+Produce twothings, in this order:
+
+1. issues: up to 5 concrete problems you found in the diff, each with the file, \
+an approximate line number (use 0 if not applicable) and a one-sentence description. If you find no \
+issues, return an empty list.\
+Do not report a problem based only on uncertainty. A reportable issue must be \
+supported by a concrete failing path, violated invariant, incompatible signature, \
+or contradiction visible in the provided input.\
+
+2. checklist: for each of the following 10 questions, first give a one-line \
+piece of evidence citing the diff or description, then answer "yes" or "no" \
+based on that evidence:
+{_CHECKLIST_BLOCK_V2}
+
+"""
+
 JUDGE_SYSTEM_V3 = f"""\
 You are a senior software engineer reviewing a pull request for merge-readiness. \
 You are given the PR title, description, unified diff, and metadata. Assess the \

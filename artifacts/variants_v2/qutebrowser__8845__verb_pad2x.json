@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=1.85 target=2.0 band=[1.60,2.40] words=96/52",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "Allow the quickmarks to be reloaded from disk without having to restart qutebrowser at all\n\n<!-- Thanks so much for going ahead and submitting a pull request to us! Please do take the time to pick out a descriptive title for it (and not just something along the lines of \"issue 12345\"). If it happens that there is an open issue that is associated with your PR, then please go ahead and add a line, something like \"Closes #12345\", somewhere within the PR description (making sure it is placed outside of this particular comment here) -->",
+    "diff_patch": "diff --git a/qutebrowser/browser/commands.py b/qutebrowser/browser/commands.py\nindex ebce4b37a43..947d22b66c9 100644\n--- a/qutebrowser/browser/commands.py\n+++ b/qutebrowser/browser/commands.py\n@@ -1187,6 +1187,14 @@ def _run_userscript(self, selection, cmd, args, verbose, output_messages,\n             raise cmdutils.CommandError(e)\n         return runner\n \n+    @cmdutils.register(instance='command-dispatcher', scope='window')\n+    def quickmarks_reload(self):\n+        \"\"\"Reload quickmarks from disk.\"\"\"\n+        quickmark_manager = objreg.get('quickmark-manager')\n+        quickmark_manager.reload()\n+\n+        message.info(\"Quickmarks reloaded.\")\n+\n     @cmdutils.register(instance='command-dispatcher', scope='window')\n     def quickmark_save(self):\n         \"\"\"Save the current page as a quickmark.\"\"\"\n@@ -1350,6 +1358,14 @@ def bookmark_list(self, jump=False, tab=True, bg=False, window=False):\n             url.setFragment('bookmarks')\n         self._open(url, tab, bg, window)\n \n+    @cmdutils.register(instance='command-dispatcher', scope='window')\n+    def bookmarks_reload(self):\n+        \"\"\"Reload bookmarks from disk.\"\"\"\n+        bookmark_manager = objreg.get('bookmark-manager')\n+        bookmark_manager.reload()\n+\n+        message.info(\"Bookmarks reloaded.\")\n+\n     @cmdutils.register(instance='command-dispatcher', scope='window')\n     def download(self, url=None, *, mhtml_=False, dest=None):\n         \"\"\"Download a given URL, or current page if no URL given.\ndiff --git a/qutebrowser/browser/urlmarks.py b/qutebrowser/browser/urlmarks.py\nindex f9879274bbc..492496eb307 100644\n--- a/qutebrowser/browser/urlmarks.py\n+++ b/qutebrowser/browser/urlmarks.py\n@@ -67,12 +67,8 @@ def __init__(self, parent=None):\n \n         self.marks: MutableMapping[str, str] = collections.OrderedDict()\n \n-        self._init_lineparser()\n-        for line in self._lineparser:\n-            if not line.strip() or line.startswith('#'):\n-                # Ignore empty or whitespace-only lines and comments.\n-                continue\n-            self._parse_line(line)\n+        self.reload()\n+\n         self._init_savemanager(objreg.get('save-manager'))\n \n     def _init_lineparser(self):\n@@ -103,6 +99,18 @@ def clear(self):\n         self.marks.clear()\n         self.changed.emit()\n \n+    def reload(self):\n+        \"\"\"Reload quickmarks/bookmarks from disk.\"\"\"\n+        self.marks.clear()\n+\n+        self._init_lineparser()\n+        for line in self._lineparser:\n+            if not line.strip() or line.startswith('#'):\n+                # Ignore empty or whitespace-only lines and comments.\n+                continue\n+            self._parse_line(line)\n+        self.changed.emit()\n+\n \n class QuickmarkManager(UrlMarkManager):\n \ndiff --git a/tests/end2end/features/urlmarks.feature b/tests/end2end/features/urlmarks.feature\nindex 5776b47d843..17ec2aaf466 100644\n--- a/tests/end2end/features/urlmarks.feature\n+++ b/tests/end2end/features/urlmarks.feature\n@@ -133,6 +133,10 @@ Feature: quickmarks and bookmarks\n         And I run :bookmark-load -d http://localhost:(port)/data/numbers/8.txt\n         Then the bookmark file should not contain \"http://localhost:*/data/numbers/8.txt *\"\n \n+    Scenario:\n+        When I run :bookmarks-reload\n+        Then the message \"Bookmarks reloaded.\" should be shown\n+\n     ## quickmarks\n \n     Scenario: Saving a quickmark (:quickmark-add)\n@@ -298,3 +302,7 @@ Feature: quickmarks and bookmarks\n         And I wait until qute://bookmarks is loaded\n         And I run :forward\n         Then data/numbers/1.txt should be loaded\n+\n+    Scenario:\n+        When I run :quickmarks-reload\n+        Then the message \"Quickmarks reloaded.\" should be shown\ndiff --git a/tests/unit/browser/test_urlmarks.py b/tests/unit/browser/test_urlmarks.py\nindex 6680ff318fd..4d1110ef435 100644\n--- a/tests/unit/browser/test_urlmarks.py\n+++ b/tests/unit/browser/test_urlmarks.py\n@@ -111,3 +111,22 @@ def test_save(bm_file, fake_save_manager, qtbot):\n         'http://example.com Example Site',\n         'http://example.com/notitle ',\n     ]\n+\n+\n+def test_reload(bm_file, fake_save_manager, qtbot):\n+    bm_file.write('\\n'.join([\n+        'http://example.com Example Site',\n+    ]))\n+\n+    bm = urlmarks.BookmarkManager()\n+\n+    bm_file.write('\\n'.join([\n+        'http://example.org Example Site',\n+    ]))\n+\n+    with qtbot.wait_signal(bm.changed):\n+        bm.reload()\n+\n+    assert list(bm.marks.items()) == [\n+        ('http://example.org', 'Example Site'),\n+    ]\n",
+    "language": "Python",
+    "merged_at": "2026-01-21T07:56:50Z",
+    "pr_number": 8845,
+    "repo": "qutebrowser/qutebrowser",
+    "task_id": "qutebrowser__8845",
+    "title": "Add \"quickmarks_reload\" command",
+    "variant": "verb_pad2x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "qutebrowser__8845",
+  "variant": "verb_pad2x"
+}

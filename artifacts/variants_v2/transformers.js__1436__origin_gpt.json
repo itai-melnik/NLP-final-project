@@ -1,0 +1,35 @@
+{
+  "axis": "origin",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true,
+    "trailer": "Co-Authored-By: Copilot <copilot@users.noreply.github.com>"
+  },
+  "judge_input": {
+    "description": "The following errors from https://github.com/huggingface/transformers.js/issues/1409 are adressed by this PR:\r\n-  Added a type definition (@typedef) that tells TypeScript what PretrainedProcessorOptions is\r\n-  Changed the parameter type from \"an array of Tensors\" to \"exactly 3 Tensors\" (char, bpe, wp)\r\n- The sharp import error (needs esModuleInterop)\r\n\r\nCloses https://github.com/huggingface/transformers.js/issues/1337\r\nCloses https://github.com/huggingface/transformers.js/issues/1409\n\nCo-Authored-By: Copilot <copilot@users.noreply.github.com>",
+    "diff_patch": "diff --git a/src/models/auto/processing_auto.js b/src/models/auto/processing_auto.js\nindex 4f955546f..f599c9a89 100644\n--- a/src/models/auto/processing_auto.js\n+++ b/src/models/auto/processing_auto.js\n@@ -8,15 +8,19 @@ import * as AllProcessors from '../processors.js';\n import * as AllImageProcessors from '../image_processors.js';\n import * as AllFeatureExtractors from '../feature_extractors.js';\n \n+/**\n+ * @typedef {import('../../base/processing_utils.js').PretrainedProcessorOptions} PretrainedProcessorOptions\n+ */\n+\n /**\n  * Helper class which is used to instantiate pretrained processors with the `from_pretrained` function.\n  * The chosen processor class is determined by the type specified in the processor config.\n- * \n+ *\n  * **Example:** Load a processor using `from_pretrained`.\n  * ```javascript\n  * let processor = await AutoProcessor.from_pretrained('openai/whisper-tiny.en');\n  * ```\n- * \n+ *\n  * **Example:** Run an image through a processor.\n  * ```javascript\n  * let processor = await AutoProcessor.from_pretrained('Xenova/clip-vit-base-patch16');\ndiff --git a/src/models/mgp_str/processing_mgp_str.js b/src/models/mgp_str/processing_mgp_str.js\nindex a4da992cc..4232277cb 100644\n--- a/src/models/mgp_str/processing_mgp_str.js\n+++ b/src/models/mgp_str/processing_mgp_str.js\n@@ -110,7 +110,7 @@ export class MgpstrProcessor extends Processor {\n \n     /**\n      * Convert a list of lists of token ids into a list of strings by calling decode.\n-     * @param {import('../../utils/tensor.js').Tensor[]} sequences List of tokenized input ids.\n+     * @param {[import('../../utils/tensor.js').Tensor, import('../../utils/tensor.js').Tensor, import('../../utils/tensor.js').Tensor]} sequences List of tokenized input ids.\n      * @returns {{generated_text: string[], scores: number[], char_preds: string[], bpe_preds: string[], wp_preds: string[]}}\n      * Dictionary of all the outputs of the decoded results.\n      * - generated_text: The final results after fusion of char, bpe, and wp.\n@@ -119,8 +119,7 @@ export class MgpstrProcessor extends Processor {\n      * - bpe_preds: The list of BPE decoded sentences.\n      * - wp_preds: The list of wp decoded sentences.\n      */\n-    // @ts-expect-error The type of this method is not compatible with the one\n-    // in the base class. It might be a good idea to fix this.\n+    // @ts-expect-error The type of this method is not compatible with the one in the base class.\n     batch_decode([char_logits, bpe_logits, wp_logits]) {\n         const [char_preds, char_scores] = this._decode_helper(char_logits, 'char');\n         const [bpe_preds, bpe_scores] = this._decode_helper(bpe_logits, 'bpe');\ndiff --git a/tsconfig.json b/tsconfig.json\nindex fb6de7097..793c686c2 100644\n--- a/tsconfig.json\n+++ b/tsconfig.json\n@@ -13,7 +13,8 @@\n     \"declaration\": true,\n     \"declarationMap\": true,\n     \"noEmit\": false,\n-    \"emitDeclarationOnly\": true\n+    \"emitDeclarationOnly\": true,\n+    \"esModuleInterop\": true\n   },\n   \"typeAcquisition\": {\n     \"include\": [\"jest\"]\n",
+    "language": "JavaScript",
+    "merged_at": "2025-10-14T16:23:52Z",
+    "pr_number": 1436,
+    "repo": "huggingface/transformers.js",
+    "task_id": "transformers.js__1436",
+    "title": "Type error fixes",
+    "variant": "origin_gpt"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "transformers.js__1436",
+  "variant": "origin_gpt"
+}

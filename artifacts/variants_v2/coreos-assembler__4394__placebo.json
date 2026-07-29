@@ -1,0 +1,40 @@
+{
+  "axis": "placebo",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": false,
+      "check": "placebo_metadata_changed",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true
+  },
+  "judge_input": {
+    "description": "This was released in OSBuild v166 and is now in the RPM in Fedora 43.",
+    "diff_patch": "diff --git a/build.sh b/build.sh\nindex f9cc3ffc10..9a838fe59b 100755\n--- a/build.sh\n+++ b/build.sh\n@@ -205,7 +205,6 @@ patch_osbuild() {\n     # Now all the software is under the /usr/lib/osbuild dir and we can patch\n     # shellcheck disable=SC2002\n     cat \\\n-        /usr/lib/coreos-assembler/0001-stages-mkfs.xfs-support-setting-agcount.patch \\\n         /usr/lib/coreos-assembler/0002-stages-extend-to-find-EFI-under-usr-lib-efi.patch \\\n             | patch -d /usr/lib/osbuild -p1\n     # And then move the files back; supermin appliance creation will need it back\ndiff --git a/src/0001-stages-mkfs.xfs-support-setting-agcount.patch b/src/0001-stages-mkfs.xfs-support-setting-agcount.patch\ndeleted file mode 100644\nindex 695d0b05b4..0000000000\n--- a/src/0001-stages-mkfs.xfs-support-setting-agcount.patch\n+++ /dev/null\n@@ -1,57 +0,0 @@\n-From 279ca188b6e44da26fae4491366cc21d66cd6406 Mon Sep 17 00:00:00 2001\n-From: Dusty Mabe <dusty@dustymabe.com>\n-Date: Tue, 11 Nov 2025 21:37:17 -0500\n-Subject: [PATCH] stages/mkfs.xfs: support setting agcount\n-\n-For disk images (and the filesystems on them) that are created and later\n-grown there can be a performance issue if the agcount for XFS\n-filesystems increases many times because of the growfs.\n-\n-In order to help reduce the chances of performance issues happening we\n-want to be able to set the agcount on newly created filesystems to\n-2 (current default is 4) [1].\n-\n-[1] https://github.com/coreos/fedora-coreos-tracker/issues/1993#issuecomment-3184392894\n----\n- stages/org.osbuild.mkfs.xfs           | 6 +++++-\n- stages/org.osbuild.mkfs.xfs.meta.json | 4 ++++\n- 2 files changed, 9 insertions(+), 1 deletion(-)\n-\n-diff --git a/stages/org.osbuild.mkfs.xfs b/stages/org.osbuild.mkfs.xfs\n-index ebb414a3..b4481655 100755\n---- a/stages/org.osbuild.mkfs.xfs\n-+++ b/stages/org.osbuild.mkfs.xfs\n-@@ -10,10 +10,14 @@ def main(devices, options):\n- \n-     uuid = options[\"uuid\"]\n-     label = options.get(\"label\")\n-+    agcount = options.get(\"agcount\")\n-     opts = []\n- \n-     if label:\n--        opts = [\"-L\", label]\n-+        opts.extend([\"-L\", label])\n-+\n-+    if agcount:\n-+        opts.extend([\"-d\", f\"agcount={agcount}\"])\n- \n-     subprocess.run([\"mkfs.xfs\", \"-m\", f\"uuid={uuid}\"] + opts + [device],\n-                    encoding='utf8', check=True)\n-diff --git a/stages/org.osbuild.mkfs.xfs.meta.json b/stages/org.osbuild.mkfs.xfs.meta.json\n-index d832b77e..25f1da18 100644\n---- a/stages/org.osbuild.mkfs.xfs.meta.json\n-+++ b/stages/org.osbuild.mkfs.xfs.meta.json\n-@@ -33,6 +33,10 @@\n-           \"description\": \"Label for the file system\",\n-           \"type\": \"string\",\n-           \"maxLength\": 12\n-+        },\n-+        \"agcount\": {\n-+          \"description\": \"The number of allocation groups for the file system\",\n-+          \"type\": \"integer\"\n-         }\n-       }\n-     }\n--- \n-2.51.0\n-\n",
+    "language": "Go",
+    "merged_at": "2020-01-01T00:00:00Z",
+    "pr_number": 99999,
+    "repo": "coreos/coreos-assembler",
+    "task_id": "coreos-assembler__4394",
+    "title": "osubild: drop backport patch for setting xfs agcount",
+    "variant": "placebo"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "coreos-assembler__4394",
+  "variant": "placebo"
+}

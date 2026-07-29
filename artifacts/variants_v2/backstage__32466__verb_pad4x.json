@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.43 target=4.0 band=[3.20,4.80] words=618/180",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "## Hey, I just made a Pull Request!\n\n<!-- Please, if you would be so kind, go right ahead and describe the particular thing that it is that you have added here in this spot, and then, in the event that it happens to be at all possible for you to manage it, please also go ahead and add in a screenshot of the thing as well while you are about it.\n     The whole reason that we go about asking for that is because doing exactly that is the very thing which ends up making it a good deal easier for everybody involved to properly understand the change that has been made here, and that in its turn is precisely the thing which then puts us in a position to be able to :shipit: a good deal faster than we would otherwise have been able to manage. -->\nClosses:\n- #32429 \n\nWhat has been done here is that the `ScheduledTasksContent` component has been updated, and the entire point and purpose behind going and updating that component in the first place was so that it would end up providing visual feedback that is better than the visual feedback which it happened to provide beforehand, and the particular situation in which all of that comes into play is the situation where a user turns out to be lacking the permission that would be required of them in order for them to trigger a scheduled task. The thing that this particular change goes ahead and does, then, is that it introduces into the picture a `CreateNotAllowed` component all of its very own, and that component right there is one whose job is to go ahead and display a disabled block icon, and then, sitting right there together with that icon, there is additionally a tooltip of the descriptive sort as well. That very component is then the thing which is, as of now, being used in the role of the `errorPage` prop, and the place where it is being used in that role is over inside of the `RequirePermission` wrapper.\n\nAdditional changes:\n- Went ahead and centered the Actions column exactly as that column sits there inside of the tasks table, and the reason behind going and doing that particular thing was entirely for the sake of achieving better alignment in the UI than there was before.\n- Added in a changeset of its own as well, and that changeset there is one that exists specifically for the sake of the patch release.\n\n<img width=\"1829\" height=\"787\" alt=\"image\" src=\"https://github.com/user-attachments/assets/fbff2991-7445-4e71-b544-1dd179335074\" />\n\n#### :heavy_check_mark: Checklist\n\n<!--- Please, if you would, go right ahead and make a point of including each and every single one of the following things over inside of your Pull Request, and do that in whichever of the cases it happens to be that they are actually applicable to the situation at hand: -->\n\n- [x] A changeset, one which goes ahead and describes the change its own self and which additionally describes each of the packages that end up being affected by that change as well. ([more info](https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md#creating-changesets))\n- [ ] Documentation which has either been newly added in or else has been updated from what it was\n- [x] Tests which cover the new functionality that has been introduced, and, right alongside those, regression tests covering each and every one of the bug fixes\n- [x] Screenshots which have been properly attached to the whole thing (and this is for those changes which happen to be UI changes)\n- [x] Each and every single last one of your commits is one that has a `Signed-off-by` line sitting right there inside of the message that belongs to it. ([more info](https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md#developer-certificate-of-origin))",
+    "diff_patch": "diff --git a/.changeset/small-jars-lick.md b/.changeset/small-jars-lick.md\nnew file mode 100644\nindex 00000000000000..b2160eb7f7afdc\n--- /dev/null\n+++ b/.changeset/small-jars-lick.md\n@@ -0,0 +1,5 @@\n+---\n+'@backstage/plugin-devtools': patch\n+---\n+\n+Fixes an issue where a user lacking permission to schedule tasks can now easily see the issue through a custom icon + tooltip.\ndiff --git a/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx b/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\nindex 2d4abd56ef7eab..7517cf8ea5d551 100644\n--- a/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\n+++ b/plugins/devtools/src/components/Content/ScheduledTasksContent/ScheduledTasksContent.tsx\n@@ -35,6 +35,7 @@ import { alertApiRef, configApiRef, useApi } from '@backstage/core-plugin-api';\n import RefreshIcon from '@material-ui/icons/Refresh';\n import NightsStay from '@material-ui/icons/NightsStay';\n import ErrorIcon from '@material-ui/icons/Error';\n+import BlockIcon from '@material-ui/icons/Block';\n import CircularProgress from '@material-ui/core/CircularProgress';\n import { ScheduledTaskDetailPanel } from './ScheduledTaskDetailedPanel';\n import { RequirePermission } from '@backstage/plugin-permission-react';\n@@ -89,6 +90,12 @@ const StatusDisplay = ({\n   </Box>\n );\n \n+const CreateNotAllowed = () => (\n+  <Tooltip title=\"You are not allowed to perform this action\">\n+    <BlockIcon color=\"disabled\" />\n+  </Tooltip>\n+);\n+\n /** @public */\n export const ScheduledTasksContent = () => {\n   const classes = useStyles();\n@@ -198,7 +205,10 @@ export const ScheduledTasksContent = () => {\n     {\n       title: 'Actions',\n       render: (rowData: TaskApiTasksResponse) => (\n-        <RequirePermission permission={devToolsTaskSchedulerCreatePermission}>\n+        <RequirePermission\n+          permission={devToolsTaskSchedulerCreatePermission}\n+          errorPage={<CreateNotAllowed />}\n+        >\n           <Tooltip title=\"Run Task\">\n             <IconButton\n               aria-label=\"Trigger\"\n@@ -225,6 +235,7 @@ export const ScheduledTasksContent = () => {\n       ),\n       sorting: false,\n       width: '10%',\n+      align: 'center',\n     },\n   ];\n \n",
+    "language": "TypeScript",
+    "merged_at": "2026-01-23T15:26:14Z",
+    "pr_number": 32466,
+    "repo": "backstage/backstage",
+    "task_id": "backstage__32466",
+    "title": "fix(devtools): improve permission feedback in ScheduledTasksContent",
+    "variant": "verb_pad4x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "backstage__32466",
+  "variant": "verb_pad4x"
+}

@@ -1,0 +1,35 @@
+{
+  "axis": "origin",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "desc_baseline_plus_trailer_only",
+      "detail": "",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": true,
+    "trailer": "Co-Authored-By: Copilot <copilot@users.noreply.github.com>"
+  },
+  "judge_input": {
+    "description": "This fixes EOF lookups for `InverseLocation`. Currently this will panic as any `LineOffset` requires a trailing newline. We now use the EOF as the end of line for the last line.\r\n\r\nFixes https://github.com/bufbuild/vscode-buf/issues/478#issuecomment-3541151881\n\nCo-Authored-By: Copilot <copilot@users.noreply.github.com>",
+    "diff_patch": "diff --git a/experimental/source/file.go b/experimental/source/file.go\nindex 685fa882..a132531f 100644\n--- a/experimental/source/file.go\n+++ b/experimental/source/file.go\n@@ -150,6 +150,9 @@ func (f *File) Line(line int) string {\n // line is expected to be 1-indexed.\n func (f *File) LineOffsets(line int) (start, end int) {\n \tlines := f.lines()\n+\tif len(lines) == line {\n+\t\treturn lines[line-1], len(f.Text())\n+\t}\n \treturn lines[line-1], lines[line]\n }\n \n@@ -221,6 +224,7 @@ func inverseLocation(f *File, line, column int, units length.Unit) int {\n \t\t\t\tbreak\n \t\t\t}\n \t\t}\n+\t\toffset += column\n \tcase length.Bytes:\n \t\toffset = column - 1\n \tcase length.UTF16:\n@@ -231,6 +235,9 @@ func inverseLocation(f *File, line, column int, units length.Unit) int {\n \t\t\t\tbreak\n \t\t\t}\n \t\t}\n+\t\tif column > 0 {\n+\t\t\toffset += column\n+\t\t}\n \tcase length.TermWidth:\n \t\tpanic(\"protocompile/source: passed TermWidth to File.InvertLocation\")\n \t}\ndiff --git a/experimental/source/span_test.go b/experimental/source/span_test.go\nindex 4953b6b2..c7696d2a 100644\n--- a/experimental/source/span_test.go\n+++ b/experimental/source/span_test.go\n@@ -28,7 +28,7 @@ func TestLocation(t *testing.T) {\n \n \tfile := source.NewFile(\n \t\t\"test\",\n-\t\t\"foo\\nbar\\ncat: 🐈‍⬛\\n\",\n+\t\t\"foo\\nbar\\ncat: 🐈‍⬛\\ntail\",\n \t)\n \n \ttests := []struct {\n@@ -54,6 +54,11 @@ func TestLocation(t *testing.T) {\n \t\t{loc: source.Location{23, 3, 10}, unit: length.UTF16},\n \t\t{loc: source.Location{23, 3, 9}, unit: length.Runes},\n \t\t{loc: source.Location{23, 3, 8}, unit: length.TermWidth},\n+\t\t{loc: source.Location{24, 4, 1}, unit: length.UTF16},\n+\t\t{loc: source.Location{27, 4, 4}, unit: length.UTF16},\n+\t\t{loc: source.Location{28, 4, 5}, unit: length.UTF16},\n+\t\t{loc: source.Location{28, 4, 5}, unit: length.Runes},\n+\t\t{loc: source.Location{28, 4, 5}, unit: length.Bytes},\n \t}\n \n \tfor _, test := range tests {\n",
+    "language": "Go",
+    "merged_at": "2025-11-18T14:46:38Z",
+    "pr_number": 630,
+    "repo": "bufbuild/protocompile",
+    "task_id": "protocompile__630",
+    "title": "Fix InverseLocation for EOF lookups",
+    "variant": "origin_gpt"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "protocompile__630",
+  "variant": "origin_gpt"
+}

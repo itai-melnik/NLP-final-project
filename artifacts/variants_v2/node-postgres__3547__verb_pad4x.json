@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.50 target=4.0 band=[3.20,4.80] words=410/117",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "This particular PR right here is one that goes ahead and introduces a total of three separate changes, and the whole entire point and purpose behind every one of them is to take the pg package and make it into something that is rather more compatible with Deno than it was before, while at the very same time as all of that also keeping the full and complete Node.js functionality entirely intact just as it was:\n\n1. **Default user value**  \n   - Go right ahead and replace `user: process.platform === 'win32' ? process.env.USERNAME : process.env.USER`  \n     with `user: 'postgres'` instead, doing that over inside of the defaults where it sits.\n   - The thing that this particular change accomplishes is that it goes and avoids the whole business of there being a requirement for environment variables at all in the case where you happen to be over in Deno.\n\n2. **Config-first parameter resolution**  \n   - Update the `val()` function as it exists in connection-parameters.js in such a way that it now goes and returns `config[key]` first of all, ahead of everything else, before it ever goes\n     and checks any of the environment variables at all.\n   - This right here is exactly the thing that ends up preventing the Deno errors from happening, and the specific case that it prevents them in is the case where `--allow-env` happens not to have been granted at all.\n\n3. **Safe NODE_PG_FORCE_NATIVE check**  \n   - Take the whole of the `NODE_PG_FORCE_NATIVE` check and wrap the entirety of it up inside of a `try/catch` block.\n   - What this manages to ensure is that the `process.env` access, in the case where one is over in Deno, is not something that ends up throwing at all, and, importantly, it manages to do all of that while still going and preserving the Node.js behavior exactly as that behavior was beforehand.\n\nAll of these changes here, taken together with one another as a single whole, are ones that go and maintain the Node.js compatibility exactly and precisely as that compatibility was beforehand, and, over and above just that alone, they additionally go and preserve the lazy-loading of the native module the way it always was,\nand then, on top of every last bit of all of that, they also go ahead and allow the package its own self to be used over on the Deno side of things without there being any requirement at all, of any kind whatsoever, for `--allow-env` to have been granted.",
+    "diff_patch": "diff --git a/packages/pg/lib/connection-parameters.js b/packages/pg/lib/connection-parameters.js\nindex a7b941c10..c153932bb 100644\n--- a/packages/pg/lib/connection-parameters.js\n+++ b/packages/pg/lib/connection-parameters.js\n@@ -7,6 +7,10 @@ const defaults = require('./defaults')\n const parse = require('pg-connection-string').parse // parses a connection string\n \n const val = function (key, config, envVar) {\n+  if (config[key]) {\n+    return config[key]\n+  }\n+\n   if (envVar === undefined) {\n     envVar = process.env['PG' + key.toUpperCase()]\n   } else if (envVar === false) {\n@@ -15,7 +19,7 @@ const val = function (key, config, envVar) {\n     envVar = process.env[envVar]\n   }\n \n-  return config[key] || envVar || defaults[key]\n+  return envVar || defaults[key]\n }\n \n const readSSLConfigFromEnvironment = function () {\ndiff --git a/packages/pg/lib/defaults.js b/packages/pg/lib/defaults.js\nindex 015909dcd..673696f79 100644\n--- a/packages/pg/lib/defaults.js\n+++ b/packages/pg/lib/defaults.js\n@@ -1,11 +1,18 @@\n 'use strict'\n \n+let user\n+try {\n+  user = process.platform === 'win32' ? process.env.USERNAME : process.env.USER\n+} catch {\n+  // ignore, e.g., Deno without --allow-env\n+}\n+\n module.exports = {\n   // database host. defaults to localhost\n   host: 'localhost',\n \n   // database user's name\n-  user: process.platform === 'win32' ? process.env.USERNAME : process.env.USER,\n+  user,\n \n   // name of database to connect\n   database: undefined,\ndiff --git a/packages/pg/lib/index.js b/packages/pg/lib/index.js\nindex 5bd73385b..e8b746149 100644\n--- a/packages/pg/lib/index.js\n+++ b/packages/pg/lib/index.js\n@@ -34,31 +34,40 @@ const PG = function (clientConstructor) {\n   this.utils = utils\n }\n \n-if (typeof process.env.NODE_PG_FORCE_NATIVE !== 'undefined') {\n-  module.exports = new PG(require('./native'))\n-} else {\n-  module.exports = new PG(Client)\n+let clientConstructor = Client\n \n-  // lazy require native module...the native module may not have installed\n-  Object.defineProperty(module.exports, 'native', {\n-    configurable: true,\n-    enumerable: false,\n-    get() {\n-      let native = null\n-      try {\n-        native = new PG(require('./native'))\n-      } catch (err) {\n-        if (err.code !== 'MODULE_NOT_FOUND') {\n-          throw err\n-        }\n+let forceNative = false\n+try {\n+  forceNative = !!process.env.NODE_PG_FORCE_NATIVE\n+} catch {\n+  // ignore, e.g., Deno without --allow-env\n+}\n+\n+if (forceNative) {\n+  clientConstructor = require('./native')\n+}\n+\n+module.exports = new PG(clientConstructor)\n+\n+// lazy require native module...the native module may not have installed\n+Object.defineProperty(module.exports, 'native', {\n+  configurable: true,\n+  enumerable: false,\n+  get() {\n+    let native = null\n+    try {\n+      native = new PG(require('./native'))\n+    } catch (err) {\n+      if (err.code !== 'MODULE_NOT_FOUND') {\n+        throw err\n       }\n+    }\n \n-      // overwrite module.exports.native so that getter is never called again\n-      Object.defineProperty(module.exports, 'native', {\n-        value: native,\n-      })\n+    // overwrite module.exports.native so that getter is never called again\n+    Object.defineProperty(module.exports, 'native', {\n+      value: native,\n+    })\n \n-      return native\n-    },\n-  })\n-}\n+    return native\n+  },\n+})\n",
+    "language": "JavaScript",
+    "merged_at": "2026-01-14T22:26:31Z",
+    "pr_number": 3547,
+    "repo": "brianc/node-postgres",
+    "task_id": "node-postgres__3547",
+    "title": "Improve Deno compatibility: config-first and safe env access",
+    "variant": "verb_pad4x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "node-postgres__3547",
+  "variant": "verb_pad4x"
+}

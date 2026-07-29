@@ -41,18 +41,18 @@ cp .env.example .env   # fill in API keys (only needed for real Stage-2 runs)
 ## Running the pipeline
 
 ```bash
-# Stage 0 — frozen PR selection (n=40). Deterministic; re-run is byte-identical.
+# Stage 0 — frozen PR selection (n=30, Type1_Direct only). Deterministic; re-run is byte-identical.
 python scripts/00_build_selection.py
 
-# Stage 1 — build the 9 variants per PR + invariance report. Fails loudly on
+# Stage 1 — build the 8 variants per PR + invariance report. Fails loudly on
 # any invariance violation. LLM verbosity rewrites are cached; --regenerate to redo.
 python scripts/01_build_variants.py
 
 # Stage 2 — judging. Resumable; keyed per cell; pilot runs never mix with final.
 python scripts/02_run_judges.py --mock --run-name smoke        # no spend, tests keying/resume
 python scripts/02_run_judges.py --dry-run                      # ~$0.10, real APIs, schema check
-python scripts/02_run_judges.py --run-name results_v1          # full 2,160-call battery (sync)
-python scripts/02_run_judges.py --run-name results_v1 --batch  # same battery, 50% cheaper (<=24h);
+python scripts/02_run_judges.py --run-name results_v2          # full 1,440-call battery (sync)
+python scripts/02_run_judges.py --run-name results_v2 --batch  # same battery, 50% cheaper (<=24h);
                                                                  # idempotent — re-run to collect/advance
 
 # Stage 3 — analysis

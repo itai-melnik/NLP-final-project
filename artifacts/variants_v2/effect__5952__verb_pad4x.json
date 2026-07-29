@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.40 target=4.0 band=[3.20,4.80] words=286/84",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "## Problem\n\n`@effect/opentelemetry` is the one that goes right ahead and marks both `@opentelemetry/sdk-trace-node` on the one hand and `@opentelemetry/sdk-trace-web` on the other hand as being nothing more than optional peer dependencies. However, the actual situation that exists here, notwithstanding all of that, is that both of these two packages alike are ones that end up being exported straight out of the main `index.ts` file, and the direct consequence of their being exported from there is that static ESM imports are what end up getting created out of it. What all of this then goes on to lead to, at the end of the whole chain, is that module resolution errors are the thing that ends up being caused, and the particular circumstance under which those errors show themselves is the circumstance where the users in question do not happen to have these packages installed on their side at all in the first place:\n\n```\nError: Cannot find package '@opentelemetry/sdk-trace-web' imported from \n.../@effect/opentelemetry/dist/esm/WebSdk.js\n```\n\n## Solution\n\nGo right ahead and make both `@opentelemetry/sdk-trace-node` and, right there alongside it, `@opentelemetry/sdk-trace-web` into peer dependencies of the required sort rather than the optional sort that they were before, and the particular manner in which this whole thing gets accomplished is by going and removing the both of them out from `peerDependenciesMeta` where they had been sitting.\n\n## Changes\n\n- Removed the `optional: true` setting, doing so specifically in the case of `@opentelemetry/sdk-trace-node`\n- Removed the `optional: true` setting, doing so specifically in the case of `@opentelemetry/sdk-trace-web`\n\n## Testing\n\n- The build is one that goes ahead and passes without any trouble at all\n- Every single last one of the tests passes as well, all of them together (15/15)",
+    "diff_patch": "diff --git a/.changeset/move-sdk-to-subpath-exports.md b/.changeset/move-sdk-to-subpath-exports.md\nnew file mode 100644\nindex 00000000000..cb0a62dea9d\n--- /dev/null\n+++ b/.changeset/move-sdk-to-subpath-exports.md\n@@ -0,0 +1,5 @@\n+---\n+\"@effect/opentelemetry\": minor\n+---\n+\n+Make @opentelemetry/sdk-trace-node and @opentelemetry/sdk-trace-web required peer dependencies instead of optional. This fixes module resolution errors when importing from the main entry point.\ndiff --git a/packages/opentelemetry/package.json b/packages/opentelemetry/package.json\nindex f9fb5064b1d..799f54b2edf 100644\n--- a/packages/opentelemetry/package.json\n+++ b/packages/opentelemetry/package.json\n@@ -65,29 +65,6 @@\n     \"@opentelemetry/semantic-conventions\": \"^1.33.0\",\n     \"effect\": \"workspace:^\"\n   },\n-  \"peerDependenciesMeta\": {\n-    \"@opentelemetry/api\": {\n-      \"optional\": true\n-    },\n-    \"@opentelemetry/resources\": {\n-      \"optional\": true\n-    },\n-    \"@opentelemetry/sdk-metrics\": {\n-      \"optional\": true\n-    },\n-    \"@opentelemetry/sdk-trace-base\": {\n-      \"optional\": true\n-    },\n-    \"@opentelemetry/sdk-trace-node\": {\n-      \"optional\": true\n-    },\n-    \"@opentelemetry/sdk-trace-web\": {\n-      \"optional\": true\n-    },\n-    \"@opentelemetry/sdk-logs\": {\n-      \"optional\": true\n-    }\n-  },\n   \"devDependencies\": {\n     \"@effect/platform\": \"workspace:^\",\n     \"@opentelemetry/api\": \"^1.9.0\",\n",
+    "language": "TypeScript",
+    "merged_at": "2026-01-21T20:43:54Z",
+    "pr_number": 5952,
+    "repo": "Effect-TS/effect",
+    "task_id": "effect__5952",
+    "title": "fix(opentelemetry): make sdk-trace-node and sdk-trace-web required peer deps",
+    "variant": "verb_pad4x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "effect__5952",
+  "variant": "verb_pad4x"
+}

@@ -89,7 +89,8 @@ def split_diff_sections(diff: str) -> list[DiffSection]:
 
     A section runs from one ``diff --git`` header line up to (but not including)
     the next. Reassembling ``"".join(s.text for s in sections)`` reproduces the
-    original diff exactly, so ``order_rev`` is a pure reordering (spec §4.2).
+    original diff exactly. (Was the basis of the order_rev axis, dropped in
+    variants v2; kept as a general diff utility.)
     """
     lines = diff.splitlines(keepends=True)
     sections: list[DiffSection] = []
@@ -118,9 +119,15 @@ class FilterResult:
 
 
 def evaluate_filters(rec: dict[str, Any], config: Config) -> FilterResult:
-    """Apply the four selection filters to one PR record."""
+    """Apply the frozen selection filters to one PR record."""
     s = config["selection"]
     reasons: list[str] = []
+
+    # v2: judge-visibility filter — only PRs whose human-flagged issues are
+    # directly visible in the diff (the judge's whole input). See spec §8.
+    want_difficulty = s.get("require_difficulty")
+    if want_difficulty and rec.get("difficulty") != want_difficulty:
+        reasons.append("difficulty_not_" + want_difficulty.lower())
 
     desc = (rec.get("description") or "").strip()
     if len(desc) < s["min_description_chars"]:

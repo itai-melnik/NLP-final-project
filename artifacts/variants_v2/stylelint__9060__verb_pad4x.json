@@ -1,0 +1,37 @@
+{
+  "axis": "verbosity",
+  "checks": [
+    {
+      "blocking": true,
+      "check": "diff_byte_identical",
+      "detail": "",
+      "passed": true
+    },
+    {
+      "blocking": true,
+      "check": "verbosity_token_ratio",
+      "detail": "ratio=3.40 target=4.0 band=[3.20,4.80] words=248/73",
+      "passed": true
+    }
+  ],
+  "construction": {
+    "deterministic": false,
+    "mock": false,
+    "model": "claude-opus-4-8",
+    "prompt_version": "cc-v1"
+  },
+  "judge_input": {
+    "description": "<!-- Each and every single pull request that happens to come in here is one that absolutely must be associated with an issue that is open, and the single solitary exception to that whole rule is the case where the pull request in question happens to be a fix to the documentation. In the event that it should turn out that a corresponding issue of that sort does not happen to exist anywhere already, then what we would ask is that you please go right ahead and create one of them yourself, and the whole reason for asking that is so that we are in a position to be able to have a proper discussion about the change itself first, before anything else at all ends up going ahead. -->\n\n<!-- Please, if you would, go right ahead and answer each and every one of the following questions here. We do in fact go ahead and close out the pull requests that do not have them answered. -->\n\n> Which issue, if any, is this issue related to?\n\nThis particular one right here is one that forms a part of https://github.com/stylelint/stylelint/issues/6869\n\n> Is there anything in the PR that needs further explanation?\n\nNo, there is not anything at all in it of that particular sort, nothing whatsoever along those lines; the whole entirety of it, taken as a whole from beginning to end, is something that is entirely and completely self-explanatory just exactly as it stands right now.",
+    "diff_patch": "diff --git a/.changeset/brave-clouds-argue.md b/.changeset/brave-clouds-argue.md\nnew file mode 100644\nindex 0000000000..0741c99052\n--- /dev/null\n+++ b/.changeset/brave-clouds-argue.md\n@@ -0,0 +1,5 @@\n+---\n+\"stylelint\": patch\n+---\n+\n+Fixed: `time-min-milliseconds` performance\ndiff --git a/lib/rules/time-min-milliseconds/index.mjs b/lib/rules/time-min-milliseconds/index.mjs\nindex bcf0090bdb..68d9324a22 100644\n--- a/lib/rules/time-min-milliseconds/index.mjs\n+++ b/lib/rules/time-min-milliseconds/index.mjs\n@@ -23,6 +23,8 @@ const meta = {\n \n const DELAY_PROPERTIES = new Set(['animation-delay', 'transition-delay']);\n \n+const HAS_TIME = /\\dm?s/i;\n+\n /** @type {import('stylelint').CoreRules[ruleName]} */\n const rule = (primary, secondaryOptions) => {\n \treturn (root, result) => {\n@@ -50,8 +52,12 @@ const rule = (primary, secondaryOptions) => {\n \t\tconst ignoreDelay = optionsMatches(secondaryOptions, 'ignore', 'delay');\n \n \t\troot.walkDecls((decl) => {\n-\t\t\tconst propertyName = vendor.unprefixed(decl.prop.toLowerCase());\n \t\t\tconst propertyValue = decl.value;\n+\n+\t\t\tif (!HAS_TIME.test(propertyValue)) return;\n+\n+\t\t\tconst propertyName = vendor.unprefixed(decl.prop.toLowerCase());\n+\n \t\t\tconst parsedValue = valueParser(getDeclarationValue(decl));\n \t\t\tlet timeValueCount = 0;\n \n",
+    "language": "JavaScript",
+    "merged_at": "2026-02-11T16:27:34Z",
+    "pr_number": 9060,
+    "repo": "stylelint/stylelint",
+    "task_id": "stylelint__9060",
+    "title": "Fix `time-min-milliseconds` performance",
+    "variant": "verb_pad4x"
+  },
+  "prompt_version": "cc-v1",
+  "task_id": "stylelint__9060",
+  "variant": "verb_pad4x"
+}
