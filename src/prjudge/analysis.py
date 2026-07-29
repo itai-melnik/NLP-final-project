@@ -206,6 +206,61 @@ def flip_rates(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(recs)
 
 
+def modal_noise_floor(df: pd.DataFrame) -> pd.DataFrame:
+    """Per-item rate the *modal* (majority-of-3) answer differs across two independent
+    3-trial draws of the same cell — the correct noise reference for ``flip_rates()``
+    (spec §6), since majority voting suppresses raw trial noise.
+
+    Computed analytically per cell rather than via literal random resampling: for a
+    cell with ``k`` "yes" out of ``m`` trials, resampling ``m`` trials with
+    replacement from that cell is exactly ``Binomial(m, q=k/m)``, so the probability
+    the modal answer of one such resample is "yes" is ``P(s > m/2)`` under that
+    binomial (ties, only possible for even ``m``, resolve to "no" — matching
+    ``pd.Series.mode().iloc[0]``'s alphabetical tie-break used in ``_modal_answers``).
+    The probability two independent resamples disagree is then
+    ``2 * p_yes * (1 - p_yes)``. This is algebraically identical to bootstrapping
+    the two draws and comparing modes, just exact and RNG-free. Averaged over all
+    (task_id, variant, judge) cells with >1 trial, matching ``noise_floor()``'s
+    cell population.
+    """
+    from scipy.stats import binom  # noqa: PLC0415
+    recs = []
+    for i in range(1, N_ITEMS + 1):
+        col = f"item_{i}"
+        p_differ = []
+        for _, grp in df.groupby(["task_id", "variant", "judge"]):
+            m = len(grp)
+            if m <= 1:
+                continue
+            k = int((grp[col] == "yes").sum())
+            q = k / m
+            p_yes = float(binom.sf(m / 2, m, q)) if q not in (0.0, 1.0) else float(q)
+            p_differ.append(2 * p_yes * (1 - p_yes))
+        recs.append({
+            "item": i,
+            "item_text": CHECKLIST_ITEMS_V1[i - 1],
+            "n_cells": len(p_differ),
+            "modal_noise_floor": float(np.mean(p_differ)) if p_differ else float("nan"),
+        })
+    return pd.DataFrame(recs)
+
+
+def flip_rates_with_noise_floor(df: pd.DataFrame) -> pd.DataFrame:
+    """``flip_rates()`` augmented with the modal noise floor and excess flip rate.
+
+    Adds ``modal_noise_floor`` (see ``modal_noise_floor()``) and
+    ``excess_flip_rate = flip_rate - modal_noise_floor`` per item. The placebo
+    axis's own per-item flip rate is already present as a row (axis="placebo")
+    and serves as an active-control reference alongside the noise floor — pivot
+    on ``axis`` to compare both side by side (spec §6).
+    """
+    fr = flip_rates(df)
+    mnf = modal_noise_floor(df)[["item", "modal_noise_floor"]]
+    out = fr.merge(mnf, on="item", how="left")
+    out["excess_flip_rate"] = out["flip_rate"] - out["modal_noise_floor"]
+    return out
+
+
 def noise_floor(df: pd.DataFrame) -> pd.DataFrame:
     """Trial-to-trial disagreement rate per item on identical input (spec §6).
 
@@ -229,27 +284,158 @@ def noise_floor(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(recs)
 
 
-def placebo_gate(df: pd.DataFrame) -> dict[str, Any]:
-    """The placebo axis must show ≈0 effect; compare |Δ| to the aggregate noise floor.
+def _cell_trial_aggregates(df: pd.DataFrame, variant: str) -> dict[tuple[str, str], np.ndarray]:
+    """Per (task_id, judge) array of trial-level ``aggregate`` values for one variant."""
+    sub = df[df["variant"] == variant]
+    out: dict[tuple[str, str], np.ndarray] = {}
+    for (tid, judge), grp in sub.groupby(["task_id", "judge"]):
+        out[(tid, judge)] = grp["aggregate"].to_numpy(dtype=float)
+    return out
 
-    Returns the placebo mean |Δ|, a noise-floor reference, and a pass flag. A
-    failing gate means the noise model is wrong and results should not be reported
-    until resolved (spec §6).
+
+def _small_sample_scale(m: int) -> float:
+    """Deviation-rescaling factor so resampling ``m`` points reproduces an unbiased
+    sampling distribution for the mean, not just an unbiased *variance*.
+
+    Two stacked small-sample corrections, both standard: (1) Bessel's correction
+    (``sqrt(m/(m-1))``) makes the *variance* of the resampled mean unbiased for
+    the population variance in expectation; but since the target statistic here
+    is |Δ|, not Δ², a second, smaller correction is needed — with only ``m``
+    (e.g. 3) points, the *realized* sample SD is itself a noisy, downward-biased
+    estimator of the population SD (E[S] = c4(df)·σ, the classic control-chart
+    "c4" factor, df = m−1), so |Δ_null| is systematically too small even after
+    Bessel correction alone. Dividing by ``c4`` corrects for that. Verified
+    empirically in ``tests/test_placebo_gate.py``: without this, the gate's
+    Type-I rate is wildly off (~2–3% pass rate instead of ~95% under a true
+    null); with it, pass rate is ~90–95%.
+    """
+    if m <= 1:
+        return 1.0
+    from scipy.special import gamma  # noqa: PLC0415
+    dof = m - 1
+    c4 = np.sqrt(2 / dof) * gamma((dof + 1) / 2) / gamma(dof / 2)
+    return float(np.sqrt(m / (m - 1)) / c4)
+
+
+def _bootstrap_delta_null(
+    trial_map: dict[tuple[str, str], np.ndarray],
+    keys: list[tuple[str, str]],
+    *,
+    n_boot: int,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """Null distribution of mean|Δ_agg| from within-cell trial resampling.
+
+    For each (task_id, judge) key, draws two independent pseudo-cells (same size
+    as the cell's own trial count, with replacement) from that cell's observed
+    trials (rescaled per ``_small_sample_scale`` to correct small-``m`` bias) and
+    differences their means. One replicate = the mean over ``keys`` of |Δ_null|;
+    returns the array of ``n_boot`` such replicate statistics.
+    """
+    per_key_abs_delta = np.empty((n_boot, len(keys)), dtype=float)
+    for j, key in enumerate(keys):
+        trials = trial_map[key]
+        m = len(trials)
+        mean = trials.mean()
+        scale = _small_sample_scale(m)
+        adjusted = mean + scale * (trials - mean)
+        idx_a = rng.integers(0, m, size=(n_boot, m))
+        idx_b = rng.integers(0, m, size=(n_boot, m))
+        mean_a = adjusted[idx_a].mean(axis=1)
+        mean_b = adjusted[idx_b].mean(axis=1)
+        per_key_abs_delta[:, j] = np.abs(mean_a - mean_b)
+    return per_key_abs_delta.mean(axis=1)
+
+
+def placebo_gate(
+    df: pd.DataFrame, *, n_boot: int = 10_000, seed: int = 0, pool_baseline_placebo: bool = False
+) -> dict[str, Any]:
+    """The placebo axis must show ≈0 effect; test |Δ| against an empirical noise null.
+
+    The old gate compared placebo mean |Δ_agg| (a difference of two 3-trial means
+    of a 10-item aggregate) to ``1.5 * noise_flip_rate`` (a single-item single-trial
+    disagreement rate) — incompatible units, so it spuriously failed. This version
+    builds the null for mean|Δ_agg| directly from the observed trial-to-trial
+    variation: for each (task_id, judge) *baseline* cell (its 3 observed trials),
+    draw two independent pseudo-cells by resampling trials with replacement and
+    difference their means. Under H0 the placebo cells are exchangeable with
+    baseline, so baseline-only resampling is valid; this implementation uses
+    baseline trials only (not pooled with placebo) to keep the null uncontaminated
+    by any possible placebo signal — pass ``pool_baseline_placebo=True`` to pool
+    both into a larger resampling pool per cell instead.
+
+    One bootstrap replicate draws one Δ_null per (task_id, judge) pair matching
+    the placebo's own pairing structure (n≈80: PRs × judges) and takes the mean of
+    |Δ_null| across pairs; the null distribution is built from ``n_boot`` such
+    replicates. The gate passes iff the observed placebo mean|Δ| is at or below
+    the null's 95th percentile (spec §6).
+
+    With only 3 trials per cell, naive resampling-with-replacement is measurably
+    biased low for |Δ| (verified in ``tests/test_placebo_gate.py``: an
+    uncorrected version passes a true null only ~2–3% of the time, i.e. it
+    reproduces the *original* bug's symptom of an almost-always-failing gate).
+    ``_bootstrap_delta_null`` applies a standard small-sample correction
+    (``_small_sample_scale``) so the null is calibrated to ~90–95% under a true
+    null in the synthetic test.
     """
     d = deltas(df)
-    placebo = d[d["variant"] == "placebo"]["delta"]
+    placebo = d[d["variant"] == "placebo"]
+    placebo_delta = placebo["delta"]
+    observed_mean_abs = float(placebo_delta.abs().mean()) if len(placebo_delta) else float("nan")
+    observed_median_abs = float(placebo_delta.abs().median()) if len(placebo_delta) else float("nan")
+
+    baseline_map = _cell_trial_aggregates(df, "baseline")
+    if pool_baseline_placebo:
+        placebo_map = _cell_trial_aggregates(df, "placebo")
+        pooled_map = {
+            key: np.concatenate([baseline_map[key], placebo_map[key]]) if key in placebo_map else trials
+            for key, trials in baseline_map.items()
+        }
+        trial_map = pooled_map
+    else:
+        trial_map = baseline_map
+
+    keys = [(row.task_id, row.judge) for row in placebo.itertuples() if (row.task_id, row.judge) in trial_map]
+    rng = np.random.default_rng(seed)
+    null_stats = (
+        _bootstrap_delta_null(trial_map, keys, n_boot=n_boot, rng=rng)
+        if keys else np.array([np.nan])
+    )
+    null_mean = float(np.mean(null_stats))
+    null_p95 = float(np.percentile(null_stats, 95))
+    p_value = float(np.mean(null_stats >= observed_mean_abs)) if not np.isnan(observed_mean_abs) else float("nan")
+    passes = bool(observed_mean_abs <= null_p95) if not np.isnan(observed_mean_abs + null_p95) else False
+
     nf = noise_floor(df)["noise_flip_rate"].mean()
-    mean_abs = float(placebo.abs().mean()) if len(placebo) else float("nan")
-    # Reference band: mean absolute Δ expected from pure trial noise is ~ nf (items
-    # flip ~nf of the time, each worth 1 point). Gate: placebo |Δ| within ~1.5x.
-    reference = 1.5 * nf if not np.isnan(nf) else float("nan")
+
+    from scipy.stats import wilcoxon  # noqa: PLC0415
+    signed_effect_by_judge: dict[str, dict[str, Any]] = {}
+    for judge, grp in placebo.groupby("judge"):
+        vals = grp["delta"].dropna().values
+        if len(vals) >= 5 and np.any(vals != 0):
+            try:
+                _, wp = wilcoxon(vals)
+            except ValueError:
+                wp = float("nan")
+        else:
+            wp = float("nan")
+        signed_effect_by_judge[judge] = {
+            "mean_delta": float(np.mean(vals)) if len(vals) else float("nan"),
+            "wilcoxon_p": float(wp),
+            "n": int(len(vals)),
+        }
+
     return {
-        "placebo_mean_abs_delta": mean_abs,
-        "placebo_median_abs_delta": float(placebo.abs().median()) if len(placebo) else float("nan"),
+        "observed_mean_abs_delta": observed_mean_abs,
+        "observed_median_abs_delta": observed_median_abs,
+        "null_mean_abs_delta": null_mean,
+        "null_p95_abs_delta": null_p95,
+        "p_value": p_value,
+        "passes": passes,
+        "n": int(len(keys)),
+        "n_boot": int(n_boot),
         "noise_floor_mean_item_rate": float(nf),
-        "reference_band": float(reference),
-        "passes": bool(mean_abs <= reference) if not np.isnan(mean_abs + reference) else False,
-        "n": int(len(placebo)),
+        "signed_effect_by_judge": signed_effect_by_judge,
     }
 
 
@@ -310,8 +496,76 @@ def self_preference(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
+# Placebo-as-active-control view (secondary; spec §6)
+# ---------------------------------------------------------------------------
+
+def placebo_active_control(df: pd.DataFrame) -> pd.DataFrame:
+    """Per (judge, axis): Δ_axis vs the same judge's Δ_placebo, paired per-PR.
+
+    SECONDARY VIEW — does not replace the primary Δ-vs-baseline analysis
+    (``delta_summary`` / ``wilcoxon_by_axis`` / ``mixedlm_by_axis``). Since the
+    placebo gate (``placebo_gate()``) shows the placebo axis itself sits near the
+    noise floor rather than at a true zero, this reframes each axis's effect
+    against that active (non-zero-null) control instead of against zero: for each
+    (task_id, judge, axis-variant) row, differences against that task_id's own
+    Δ_placebo, then a paired Wilcoxon on those per-PR differences (spec §6).
+    """
+    from scipy.stats import wilcoxon  # noqa: PLC0415
+    d = deltas(df)
+    placebo = (d[d["variant"] == "placebo"][["task_id", "judge", "delta"]]
+               .rename(columns={"delta": "delta_placebo"}))
+    axes = d[d["axis"] != "placebo"]
+    recs = []
+    for (judge, axis), grp in axes.groupby(["judge", "axis"]):
+        merged = grp.merge(placebo[placebo["judge"] == judge][["task_id", "delta_placebo"]],
+                            on="task_id", how="inner")
+        if merged.empty:
+            continue
+        diff = (merged["delta"] - merged["delta_placebo"]).dropna().values
+        if len(diff) >= 5 and np.any(diff != 0):
+            try:
+                stat, p = wilcoxon(diff)
+            except ValueError:
+                stat, p = float("nan"), float("nan")
+        else:
+            stat, p = float("nan"), float("nan")
+        recs.append({
+            "judge": judge, "axis": axis, "n": len(diff),
+            "mean_delta_axis": float(merged["delta"].mean()),
+            "mean_delta_placebo": float(merged["delta_placebo"].mean()),
+            "mean_diff_vs_placebo": float(np.mean(diff)) if len(diff) else float("nan"),
+            "median_diff_vs_placebo": float(np.median(diff)) if len(diff) else float("nan"),
+            "wilcoxon_stat": float(stat), "wilcoxon_p": float(p),
+        })
+    return pd.DataFrame(recs)
+
+
+# ---------------------------------------------------------------------------
 # Validity anchor: item 9 vs has_requested_changes (spec §6)
 # ---------------------------------------------------------------------------
+
+def cohen_kappa(a: pd.Series, b: pd.Series) -> float:
+    """Cohen's κ for two binary label series (chance-corrected agreement).
+
+    κ = (p_o − p_e) / (1 − p_e), with p_o the observed agreement rate and p_e the
+    agreement expected from the two marginals alone. Implemented directly (no
+    sklearn dependency — not in requirements.txt) since inputs are binary.
+    Raw agreement can look reasonable while κ is negative when the marginals are
+    lopsided in opposite directions (spec §6).
+    """
+    a = pd.Series(a).astype(bool).reset_index(drop=True)
+    b = pd.Series(b).astype(bool).reset_index(drop=True)
+    n = len(a)
+    if n == 0:
+        return float("nan")
+    p_o = float((a == b).mean())
+    p_a1 = float(a.mean())
+    p_b1 = float(b.mean())
+    p_e = p_a1 * p_b1 + (1 - p_a1) * (1 - p_b1)
+    if p_e >= 1.0:
+        return float("nan")
+    return (p_o - p_e) / (1 - p_e)
+
 
 def item9_validity(df: pd.DataFrame) -> pd.DataFrame:
     """Baseline item-9 ("would request changes") vs human has_requested_changes.
@@ -333,6 +587,7 @@ def item9_validity(df: pd.DataFrame) -> pd.DataFrame:
         modal["judge_flag"] = modal["item9"] == "yes"
         modal["human_flag"] = modal["hrc"].astype("boolean").fillna(False)
         agreement = float((modal["judge_flag"] == modal["human_flag"]).mean())
+        kappa = cohen_kappa(modal["judge_flag"], modal["human_flag"])
         rcc = pd.to_numeric(modal["rcc"], errors="coerce")
         valid = rcc.notna()
         rho, p = (spearmanr(modal["agg"][valid], rcc[valid]) if valid.sum() > 2 else (float("nan"),) * 2)
@@ -340,6 +595,7 @@ def item9_validity(df: pd.DataFrame) -> pd.DataFrame:
             "judge": judge,
             "n": len(modal),
             "item9_vs_human_agreement": agreement,
+            "item9_vs_human_kappa": kappa,
             "judge_request_rate": float(modal["judge_flag"].mean()),
             "human_request_rate": float(modal["human_flag"].mean()),
             "spearman_agg_vs_reqcount": float(rho),
@@ -436,8 +692,38 @@ def issue_matching(config: Config, df: pd.DataFrame) -> pd.DataFrame:
 # Inferential stats (spec §6)
 # ---------------------------------------------------------------------------
 
+def bh_adjust(pvalues: pd.Series | np.ndarray) -> np.ndarray:
+    """Benjamini–Hochberg adjusted p-values (FDR control) for an array of raw p's.
+
+    NaNs pass through as NaN and are excluded from the correction (they aren't a
+    tested hypothesis). Standard step-up procedure: sort ascending, adjust by
+    ``m/rank``, then enforce monotonicity by a running minimum from the largest
+    p-value down, and clip to 1 (spec §6 multiplicity correction).
+    """
+    p = np.asarray(pvalues, dtype=float)
+    out = np.full(p.shape, np.nan)
+    mask = ~np.isnan(p)
+    valid = p[mask]
+    m = len(valid)
+    if m == 0:
+        return out
+    order = np.argsort(valid)
+    ranked = valid[order]
+    adj = ranked * m / np.arange(1, m + 1)
+    adj = np.minimum.accumulate(adj[::-1])[::-1]
+    adj = np.clip(adj, 0, 1)
+    out_valid = np.empty(m)
+    out_valid[order] = adj
+    out[mask] = out_valid
+    return out
+
+
 def wilcoxon_by_axis(df: pd.DataFrame) -> pd.DataFrame:
-    """Wilcoxon signed-rank on Δ per (judge, axis) — robustness check for the mixed model."""
+    """Wilcoxon signed-rank on Δ per (judge, axis) — robustness check for the mixed model.
+
+    ``p_adj_bh`` is the Benjamini–Hochberg adjusted p-value within each judge
+    (correcting across that judge's axes); ``p_value`` is kept unadjusted.
+    """
     from scipy.stats import wilcoxon  # noqa: PLC0415
     d = deltas(df)
     recs = []
@@ -453,7 +739,10 @@ def wilcoxon_by_axis(df: pd.DataFrame) -> pd.DataFrame:
         recs.append({"judge": judge, "axis": axis, "n": len(vals),
                      "median_delta": float(np.median(vals)) if len(vals) else float("nan"),
                      "wilcoxon_stat": float(stat), "p_value": float(p)})
-    return pd.DataFrame(recs)
+    out = pd.DataFrame(recs)
+    if not out.empty:
+        out["p_adj_bh"] = out.groupby("judge")["p_value"].transform(lambda s: bh_adjust(s))
+    return out
 
 
 def mixedlm_by_axis(df: pd.DataFrame) -> pd.DataFrame:
@@ -494,7 +783,12 @@ def mixedlm_by_axis(df: pd.DataFrame) -> pd.DataFrame:
                         "p_value": float(res.pvalues[term]),
                         "note": "",
                     })
-    return pd.DataFrame(recs)
+    out = pd.DataFrame(recs)
+    if not out.empty:
+        # p_adj_bh: BH-adjusted within judge, across that judge's terms (excludes
+        # FIT_ERROR rows, which carry no p-value to correct).
+        out["p_adj_bh"] = out.groupby("judge")["p_value"].transform(lambda s: bh_adjust(s))
+    return out
 
 
 # ---------------------------------------------------------------------------

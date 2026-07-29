@@ -4,7 +4,7 @@
 # Usage:
 #   scripts/poll_batch.sh [run-name] [extra args...]
 #
-#   scripts/poll_batch.sh                        # run-name = results_v1, --trials 1
+#   scripts/poll_batch.sh                        # run-name = results_v1, --trials 1 (quick check)
 #   scripts/poll_batch.sh results_v1 --trials 1  # explicit
 #   scripts/poll_batch.sh results_v1             # full 3-trial battery (config default)
 #
@@ -15,14 +15,30 @@
 #
 # Ctrl-C to stop early; safe to re-run this script at any time (the underlying
 # --batch step is idempotent).
+#
+# This loop typically needs to survive many hours (each org-level
+# enqueued-token-capped provider, e.g. OpenAI, only has one chunk in flight
+# at a time — see prjudge.batch — so a ~2k-cell run walks through several
+# sequential chunks). A `sleep`-based foreground loop dies with the terminal
+# it's attached to, or when the machine sleeps. Run it so it survives both:
+#
+#   caffeinate -i nohup scripts/poll_batch.sh results_v1 \
+#       > artifacts/runs/results_v1.poll.out 2>&1 &
+#   disown
+#
+# (`caffeinate -i` blocks idle sleep only while this process runs; it does
+# not stop explicit lid-close sleep. `nohup` + `disown` detach it from this
+# terminal so closing the terminal/tab doesn't send it SIGHUP.)
 
 set -euo pipefail
 
-RUN_NAME="${1:-results_v1}"
-shift || true
-EXTRA_ARGS=("$@")
-if [ "${#EXTRA_ARGS[@]}" -eq 0 ]; then
-    EXTRA_ARGS=(--trials 2)
+if [ "$#" -eq 0 ]; then
+    RUN_NAME="results_v1"
+    EXTRA_ARGS=(--trials 1)
+else
+    RUN_NAME="$1"
+    shift
+    EXTRA_ARGS=("$@")
 fi
 
 INTERVAL_SECS=$((10 * 60))
@@ -38,7 +54,8 @@ while true; do
     TS="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
     {
         echo "=== $TS ==="
-        python scripts/02_run_judges.py --run-name "$RUN_NAME" --batch "${EXTRA_ARGS[@]}"
+        python scripts/02_run_judges.py --run-name "$RUN_NAME" --batch \
+            ${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}
     } | tee -a "$LOG_FILE"
     STATUS="${PIPESTATUS[0]}"
 

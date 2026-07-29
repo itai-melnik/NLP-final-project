@@ -24,3 +24,6 @@ tqdm==4.67.1
 # Notebooks + figures
 jupyter==1.1.1
 matplotlib==3.10.7
+
+# Tests (tests/test_placebo_gate.py — bootstrap-null unit tests for analysis.py)
+pytest==9.1.1
