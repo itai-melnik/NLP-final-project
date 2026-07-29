@@ -193,43 +193,93 @@ _CHECKLIST_BLOCK_V2 = "\n".join(
     f"  {i}. {item}" for i, item in enumerate(CHECKLIST_ITEMS_V2, start=1)
 )
 
-#TODO: make more concerete and add examples problematic are 1,2 9,10
-# need to make it clear what yes / no implies (edge case issue with pipecat__2735)
-#e.g explanation: Answer NO only when a specific relevant error or edge case is demonstrably mishandled. The absence of newly added error handling is not itself evidence that handling is inadequate.
+# v4 (pilot fix, targets the noisiest items 1/2/9/10) = v3 with:
+#
+# (a) Burden-of-proof rules stated inside the ambiguous items. The pilot's
+#     canonical flip (pipecat__2735, item 2) came from two defensible readings
+#     of "adequately handles edge cases": "does the PR *add* handling?" (no)
+#     vs "does the changed code *mishandle* anything?" (yes). Each rule pins
+#     which side carries the proof: problem items (1, 5, 6) require a reported
+#     issue; adequacy items (2, 7) require demonstrated mishandling to answer
+#     no. Definitional clarifications only — no perturbation axis is named,
+#     no verdict is imposed (spec §5.1 intact).
+#
+# (b) Issue-grounding. Items 1/9/10 flipped *together* in the pilot: one
+#     borderline finding ("possible adapter omission") cleared the "plausible"
+#     bar on some trials and not others, and the flip propagated through every
+#     holistic item. v4 makes the issues list the single evidence bar: the
+#     issues instruction gains an anti-speculation guard (concrete failing
+#     path / violated invariant / incompatible signature / contradiction), and
+#     the problem items answer yes only when backed by a reported issue.
+#
+# (c) Items 9/10 stop simulating a hypothetical "competent reviewer" and
+#     become a decision rule over the judge's own findings: 9 = at least one
+#     reported issue is blocking; 10 = approve as-is, with non-blocking
+#     suggestions explicitly not flipping it. This maps more directly onto the
+#     human has_requested_changes anchor (a human "requested changes" is a
+#     blocking request). 9/10 remain near-complements by design — kept as an
+#     internal-consistency check and for polarity balance.
+#
+# (d) Output slimming: issues lose the 3-way severity field (subsumed by the
+#     blocking judgment in item 9) and the justification section is dropped —
+#     neither fed the analysis, both cost output tokens on every cell.
+#
+# Polarity mix preserved: items 1, 5, 6, 9 remain unfavorable-if-"yes".
 CHECKLIST_ITEMS_V4 = [
-    "Introduces a plausible correctness bug or regression",
-    "Adequately handles error/edge cases in the code it touches", 
-    "Changes are covered by new or updated tests",
-    "Scoped to one coherent purpose",
-    "Introduces a security or data-safety concern",
-    "Introduces an obvious performance regression",
-    "Consistent with the surrounding code's conventions",
-    "Understandable without external context",
-    "A competent reviewer would request changes before merging",
-    "I would approve this PR as-is",
+    "Introduces a plausible correctness bug or behavioral regression "
+    "(a regression includes previously handled errors now propagating). "
+    "Answer yes only if this is supported by an issue you reported above.",
+    "Adequately handles error/edge cases in the code it touches. "
+    "Answer no only if a specific relevant case is demonstrably mishandled; "
+    "absence of new error-handling code is not by itself inadequate.",
+    "Changes are covered by new or updated tests.",
+    "Scoped to one coherent purpose. Mechanical follow-through of that purpose "
+    "(renames, moved code, test updates) counts as the same purpose.",
+    "Introduces a security or data-safety concern. "
+    "Answer yes only if this is supported by an issue you reported above.",
+    "Introduces an obvious performance regression. "
+    "Answer yes only if this is supported by an issue you reported above.",
+    "Consistent with the surrounding code's conventions. "
+    "Answer no only if the diff itself shows a concrete inconsistency.",
+    "Understandable without external context.",
+    "At least one issue you reported above is blocking: it must be fixed "
+    "before this PR is merged.",
+    "I would approve this PR as-is. Remaining suggestions that would not "
+    "block merging do not make this a no.",
 ]
 
+# v4 block: items are multi-sentence (statement + decision rule), so each one
+# is labeled "Item N" — mirroring the item_N schema keys — and blank-line
+# separated, making item boundaries unambiguous.
+_CHECKLIST_BLOCK_V4 = "\n\n".join(
+    f"Item {i}: {item}" for i, item in enumerate(CHECKLIST_ITEMS_V4, start=1)
+)
 
 JUDGE_SYSTEM_V4 = f"""\
 You are a senior software engineer reviewing a pull request for merge-readiness. \
 You are given the PR title, description, unified diff, and metadata. Assess the \
 change carefully and report your review as structured output.
 
-Produce twothings, in this order:
+Produce two things, in this order:
 
 1. issues: up to 5 concrete problems you found in the diff, each with the file, \
-an approximate line number (use 0 if not applicable) and a one-sentence description. If you find no \
-issues, return an empty list.\
-Do not report a problem based only on uncertainty. A reportable issue must be \
-supported by a concrete failing path, violated invariant, incompatible signature, \
-or contradiction visible in the provided input.\
+an approximate line number (use 0 if not applicable), and a one-sentence \
+description. Do not report a problem based only on uncertainty: a reportable \
+issue must be supported by a concrete failing path, violated invariant, \
+incompatible signature, or contradiction visible in the provided input. If you \
+find no issues, return an empty list.
 
-2. checklist: for each of the following 10 questions, first give a one-line \
-piece of evidence citing the diff or description, then answer "yes" or "no" \
-based on that evidence:
-{_CHECKLIST_BLOCK_V2}
+2. checklist: for each of the 10 items below (reported as item_1 ... item_10, \
+matching the numbering), first give a one-line piece of evidence citing the \
+diff or description, then answer "yes" or "no" based on that evidence. Where \
+an item states a decision rule, apply it literally.
 
-"""
+{_CHECKLIST_BLOCK_V4}
+
+Base every answer only on the provided title, description, diff, and metadata. \
+The diff shows only changed hunks; unchanged parts of the files — including \
+existing imports and definitions — are not visible to you. Never report an \
+issue solely because something is not visible in the diff."""
 
 JUDGE_SYSTEM_V3 = f"""\
 You are a senior software engineer reviewing a pull request for merge-readiness. \
@@ -350,6 +400,30 @@ JUDGE_SCHEMA_V2 = {
     },
 }
 
+# v4's schema: evidence-first checklist (as v2), issues without the severity
+# field, and no justification section (see the JUDGE_SYSTEM_V4 note).
+JUDGE_SCHEMA_V3 = {
+    "type": "object",
+    "properties": {
+        "issues": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "file": {"type": "string"},
+                    "approx_line": {"type": "integer"},
+                    "description": {"type": "string"},
+                },
+                "required": ["file", "approx_line", "description"],
+                "additionalProperties": False,
+            },
+        },
+        "checklist": _checklist_schema(evidence_first=True),
+    },
+    "required": ["issues", "checklist"],
+    "additionalProperties": False,
+}
+
 # Registry so a result row's prompt_version resolves to its exact frozen prompt.
 # v2 shares v1's user template, schema, and checklist — only the system prompt
 # gained the unseen-context guard. v3 changes the system prompt (evidence
@@ -373,6 +447,12 @@ JUDGE_PROMPTS = {
         "user_template": JUDGE_USER_TEMPLATE_V1,
         "schema": JUDGE_SCHEMA_V2,
         "checklist_items": CHECKLIST_ITEMS_V2,
+    },
+    "v4": {
+        "system": JUDGE_SYSTEM_V4,
+        "user_template": JUDGE_USER_TEMPLATE_V1,
+        "schema": JUDGE_SCHEMA_V3,
+        "checklist_items": CHECKLIST_ITEMS_V4,
     },
 }
 
