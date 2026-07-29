@@ -224,25 +224,14 @@ _CHECKLIST_BLOCK_V2 = "\n".join(
 #     blocking judgment in item 9) and the justification section is dropped —
 #     neither fed the analysis, both cost output tokens on every cell.
 #
-# (e) Second-pilot amendment (applied in place, before any production v4 run):
-#     the "Answer no only if ..." phrasing on the adequacy items produced
-#     answer/evidence polarity slips — three claude trials on item 7 wrote
-#     pro-consistency evidence yet answered "no", the token "no" sitting next
-#     to consistency language in the rule. Items 2 and 7 restate the rule as
-#     an explicit if/else so the answer is derived, not pattern-matched. Item
-#     9 additionally gained a definition of "blocking" (vega__4219 flipped on
-#     the same finding being called blocking or not). Definitional
-#     clarifications only, same class as (a) — spec §5.1 intact.
-#
 # Polarity mix preserved: items 1, 5, 6, 9 remain unfavorable-if-"yes".
 CHECKLIST_ITEMS_V4 = [
     "Introduces a plausible correctness bug or behavioral regression "
     "(a regression includes previously handled errors now propagating). "
     "Answer yes only if this is supported by an issue you reported above.",
     "Adequately handles error/edge cases in the code it touches. "
-    "If a specific relevant case is demonstrably mishandled, answer no; "
-    "otherwise answer yes. Absence of new error-handling code is not by "
-    "itself mishandling.",
+    "Answer no only if a specific relevant case is demonstrably mishandled; "
+    "absence of new error-handling code is not by itself inadequate.",
     "Changes are covered by new or updated tests.",
     "Scoped to one coherent purpose. Mechanical follow-through of that purpose "
     "(renames, moved code, test updates) counts as the same purpose.",
@@ -251,14 +240,10 @@ CHECKLIST_ITEMS_V4 = [
     "Introduces an obvious performance regression. "
     "Answer yes only if this is supported by an issue you reported above.",
     "Consistent with the surrounding code's conventions. "
-    "If the diff itself shows a concrete inconsistency, answer no; "
-    "otherwise answer yes.",
+    "Answer no only if the diff itself shows a concrete inconsistency.",
     "Understandable without external context.",
     "At least one issue you reported above is blocking: it must be fixed "
-    "before this PR is merged. An issue is blocking if merging without "
-    "fixing it would produce incorrect behavior, data loss, or a security "
-    "exposure in realistic use; style, robustness, or refactor suggestions "
-    "are not blocking.",
+    "before this PR is merged.",
     "I would approve this PR as-is. Remaining suggestions that would not "
     "block merging do not make this a no.",
 ]
@@ -270,7 +255,10 @@ _CHECKLIST_BLOCK_V4 = "\n\n".join(
     f"Item {i}: {item}" for i, item in enumerate(CHECKLIST_ITEMS_V4, start=1)
 )
 
-JUDGE_SYSTEM_V4 = f"""\
+def _judge_system_v4_scaffold(checklist_block: str) -> str:
+    """The v4-family system prompt; v4 and v4.1 differ ONLY in item wording,
+    so the scaffold is single-sourced and identical by construction."""
+    return f"""\
 You are a senior software engineer reviewing a pull request for merge-readiness. \
 You are given the PR title, description, unified diff, and metadata. Assess the \
 change carefully and report your review as structured output.
@@ -289,12 +277,60 @@ matching the numbering), first give a one-line piece of evidence citing the \
 diff or description, then answer "yes" or "no" based on that evidence. Where \
 an item states a decision rule, apply it literally.
 
-{_CHECKLIST_BLOCK_V4}
+{checklist_block}
 
 Base every answer only on the provided title, description, diff, and metadata. \
 The diff shows only changed hunks; unchanged parts of the files — including \
 existing imports and definitions — are not visible to you. Never report an \
 issue solely because something is not visible in the diff."""
+
+
+JUDGE_SYSTEM_V4 = _judge_system_v4_scaffold(_CHECKLIST_BLOCK_V4)
+
+# v4.1 = v4 with three item-wording amendments, registered as its OWN version
+# (never an in-place edit of v4: rows and resume cell-keys hash the version
+# string, so editing v4 in place would (a) make the pilot resume-skip every
+# cell and (b) leave existing v4-labeled rows pointing at text that never
+# produced them). Amendments, from the v4 pilot transcripts:
+#
+# - Items 2 and 7: the "Answer no only if ..." phrasing produced
+#   answer/evidence polarity slips — e.g. three claude trials on item 7 wrote
+#   pro-consistency evidence yet answered "no", the token "no" sitting next to
+#   consistency language in the rule. Restated as an explicit if/else so the
+#   answer is derived, not pattern-matched.
+# - Item 9: gained a definition of "blocking" (vega__4219 flipped on the same
+#   finding being called blocking or not): incorrect behavior / data loss /
+#   security exposure in realistic use; style, robustness, refactor
+#   suggestions are not blocking.
+#
+# Definitional clarifications only — no perturbation axis named (spec §5.1).
+CHECKLIST_ITEMS_V4_1 = [
+    CHECKLIST_ITEMS_V4[0],
+    "Adequately handles error/edge cases in the code it touches. "
+    "If a specific relevant case is demonstrably mishandled, answer no; "
+    "otherwise answer yes. Absence of new error-handling code is not by "
+    "itself mishandling.",
+    CHECKLIST_ITEMS_V4[2],
+    CHECKLIST_ITEMS_V4[3],
+    CHECKLIST_ITEMS_V4[4],
+    CHECKLIST_ITEMS_V4[5],
+    "Consistent with the surrounding code's conventions. "
+    "If the diff itself shows a concrete inconsistency, answer no; "
+    "otherwise answer yes.",
+    CHECKLIST_ITEMS_V4[7],
+    "At least one issue you reported above is blocking: it must be fixed "
+    "before this PR is merged. An issue is blocking if merging without "
+    "fixing it would produce incorrect behavior, data loss, or a security "
+    "exposure in realistic use; style, robustness, or refactor suggestions "
+    "are not blocking.",
+    CHECKLIST_ITEMS_V4[9],
+]
+
+_CHECKLIST_BLOCK_V4_1 = "\n\n".join(
+    f"Item {i}: {item}" for i, item in enumerate(CHECKLIST_ITEMS_V4_1, start=1)
+)
+
+JUDGE_SYSTEM_V4_1 = _judge_system_v4_scaffold(_CHECKLIST_BLOCK_V4_1)
 
 JUDGE_SYSTEM_V3 = f"""\
 You are a senior software engineer reviewing a pull request for merge-readiness. \
@@ -468,6 +504,12 @@ JUDGE_PROMPTS = {
         "user_template": JUDGE_USER_TEMPLATE_V1,
         "schema": JUDGE_SCHEMA_V3,
         "checklist_items": CHECKLIST_ITEMS_V4,
+    },
+    "v4.1": {
+        "system": JUDGE_SYSTEM_V4_1,
+        "user_template": JUDGE_USER_TEMPLATE_V1,
+        "schema": JUDGE_SCHEMA_V3,
+        "checklist_items": CHECKLIST_ITEMS_V4_1,
     },
 }
 

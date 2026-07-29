@@ -112,8 +112,18 @@ variants:
 # ---------------------------------------------------------------------------
 judging:
   trials: 3                        # per cell, at provider-default temperature
-  prompt_version: v3               # frozen system prompt (see prompts.py); v2 = v1
-                                   # + unseen-diff-context guard (dry-run fix, §8)
+  prompt_version: v4.1             # frozen system prompt (see prompts.py registry).
+                                   # v4 = v3 + burden-of-proof decision rules,
+                                   # issue-grounded problem items, 9/10 as decision
+                                   # rules over the judge's own findings; severity +
+                                   # justification dropped. v4.1 = v4 + if/else
+                                   # phrasing on items 2/7 and a "blocking"
+                                   # definition on item 9. Pilot flip rates
+                                   # (12 PRs x 2 judges x 3 trials, baseline):
+                                   # v3 0.233 / v4 0.183 / v4.1 0.196 mean —
+                                   # v4 vs v4.1 within noise (1-2 cells/item);
+                                   # v4.1 chosen for the polarity-slip fixes it
+                                   # verifiably landed (item 7, item 8). Spec §8.
   # 12k: dry run at effort high used ~4.2-4.8k output tokens (incl. hidden
   # reasoning) on SMALL PRs against the old 8k cap; 12k gives headroom for
   # pad4x variants and stays under the sync no-streaming SDK guard (~16k).
@@ -190,5 +200,5 @@ judging:
 versions:
   selection: v2                   # v2 2026-07-29: Type1_Direct-only pool, n=30 (spec §8)
   variants: v2                    # v2 2026-07-29: order_rev dropped, 8-variant matrix (spec §8)
-  prompt: v3                      # judge system prompt (see prompts.py registry)
+  prompt: v4.1                    # judge system prompt (see prompts.py registry)
   results: v2
