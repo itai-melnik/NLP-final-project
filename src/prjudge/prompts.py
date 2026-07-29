@@ -224,14 +224,25 @@ _CHECKLIST_BLOCK_V2 = "\n".join(
 #     blocking judgment in item 9) and the justification section is dropped —
 #     neither fed the analysis, both cost output tokens on every cell.
 #
+# (e) Second-pilot amendment (applied in place, before any production v4 run):
+#     the "Answer no only if ..." phrasing on the adequacy items produced
+#     answer/evidence polarity slips — three claude trials on item 7 wrote
+#     pro-consistency evidence yet answered "no", the token "no" sitting next
+#     to consistency language in the rule. Items 2 and 7 restate the rule as
+#     an explicit if/else so the answer is derived, not pattern-matched. Item
+#     9 additionally gained a definition of "blocking" (vega__4219 flipped on
+#     the same finding being called blocking or not). Definitional
+#     clarifications only, same class as (a) — spec §5.1 intact.
+#
 # Polarity mix preserved: items 1, 5, 6, 9 remain unfavorable-if-"yes".
 CHECKLIST_ITEMS_V4 = [
     "Introduces a plausible correctness bug or behavioral regression "
     "(a regression includes previously handled errors now propagating). "
     "Answer yes only if this is supported by an issue you reported above.",
     "Adequately handles error/edge cases in the code it touches. "
-    "Answer no only if a specific relevant case is demonstrably mishandled; "
-    "absence of new error-handling code is not by itself inadequate.",
+    "If a specific relevant case is demonstrably mishandled, answer no; "
+    "otherwise answer yes. Absence of new error-handling code is not by "
+    "itself mishandling.",
     "Changes are covered by new or updated tests.",
     "Scoped to one coherent purpose. Mechanical follow-through of that purpose "
     "(renames, moved code, test updates) counts as the same purpose.",
@@ -240,10 +251,14 @@ CHECKLIST_ITEMS_V4 = [
     "Introduces an obvious performance regression. "
     "Answer yes only if this is supported by an issue you reported above.",
     "Consistent with the surrounding code's conventions. "
-    "Answer no only if the diff itself shows a concrete inconsistency.",
+    "If the diff itself shows a concrete inconsistency, answer no; "
+    "otherwise answer yes.",
     "Understandable without external context.",
     "At least one issue you reported above is blocking: it must be fixed "
-    "before this PR is merged.",
+    "before this PR is merged. An issue is blocking if merging without "
+    "fixing it would produce incorrect behavior, data loss, or a security "
+    "exposure in realistic use; style, robustness, or refactor suggestions "
+    "are not blocking.",
     "I would approve this PR as-is. Remaining suggestions that would not "
     "block merging do not make this a no.",
 ]
