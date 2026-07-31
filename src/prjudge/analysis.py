@@ -655,6 +655,51 @@ def _issue_matches(issue: dict, human_locs: list[dict]) -> bool:
     return False
 
 
+def issue_recall_precision(df: pd.DataFrame, units_by_task: dict[str, list[dict]]) -> pd.DataFrame:
+    """Tier-A issue-level validity: comment-level recall + issue-level precision.
+
+    ``units_by_task`` maps task_id → human comment units (as from
+    ``human_issue_locations``). Per (judge, variant):
+      * recall — micro-average over human units of the per-unit match propensity
+        (fraction of trials in which ≥1 judge issue matched that unit);
+      * precision — micro-average over judge issues (pooled across trials/tasks)
+        of whether the issue matched ≥1 human unit;
+      * n_human_units — pooled unit count; n_judge_issues — mean issues/trial.
+    """
+    recs = []
+    for (judge, variant), grp in df.groupby(["judge", "variant"]):
+        unit_props, issue_hits, n_issues_per_trial = [], [], []
+        for tid, cell in grp.groupby("task_id"):
+            units = units_by_task.get(tid, [])
+            trials = [r["issues"] or [] for _, r in cell.iterrows()]
+            for u in units:
+                hits = [any(_issue_matches(iss, [u]) for iss in issues) for issues in trials]
+                unit_props.append(float(np.mean(hits)) if hits else 0.0)
+            for issues in trials:
+                n_issues_per_trial.append(len(issues))
+                issue_hits.extend(_issue_matches(iss, units) for iss in issues)
+        recs.append({
+            "judge": judge, "variant": variant,
+            "axis": VARIANT_AXIS.get(variant, "unknown"),
+            "recall": float(np.mean(unit_props)) if unit_props else float("nan"),
+            "precision": float(np.mean(issue_hits)) if issue_hits else float("nan"),
+            "n_human_units": len(unit_props),
+            "n_judge_issues": float(np.mean(n_issues_per_trial)) if n_issues_per_trial else 0.0,
+        })
+    return pd.DataFrame(recs).sort_values(["judge", "variant"]).reset_index(drop=True)
+
+
+def issue_recall_precision_from_config(config: Config, df: pd.DataFrame) -> pd.DataFrame:
+    """Tier-A wrapper: load human units from annotations for every task in ``df``."""
+    units = {}
+    for tid in df["task_id"].unique():
+        try:
+            units[tid] = human_issue_locations(config, tid)
+        except FileNotFoundError:
+            units[tid] = []
+    return issue_recall_precision(df, units)
+
+
 def issue_matching(config: Config, df: pd.DataFrame) -> pd.DataFrame:
     """Detection overlap with human reviewers, per (judge, variant).
 
@@ -743,6 +788,44 @@ def wilcoxon_by_axis(df: pd.DataFrame) -> pd.DataFrame:
     if not out.empty:
         out["p_adj_bh"] = out.groupby("judge")["p_value"].transform(lambda s: bh_adjust(s))
     return out
+
+
+def equivalence_by_axis(df: pd.DataFrame, margin: float = 0.5) -> pd.DataFrame:
+    """TOST equivalence + minimum detectable effect on paired Δ, per (judge, axis).
+
+    Converts each non-significant axis into a bounded claim (spec §6 / RQ3):
+      * ``tost_p`` — max of the two one-sided paired t-test p-values against
+        ±``margin``; < .05 establishes |mean Δ| < margin at the 5% level.
+      * ``ci90_lo``/``ci90_hi`` — 90% CI of mean Δ (the TOST-dual interval).
+      * ``equiv_margin_min`` — widest |bound| of that CI: the smallest symmetric
+        margin at which equivalence would pass at alpha=.05.
+      * ``mde_80`` — minimum true mean shift detectable with 80% power at
+        two-sided alpha=.05 given the observed SD and n.
+    """
+    from scipy import stats  # noqa: PLC0415
+    d = deltas(df)
+    recs = []
+    for (judge, axis), grp in d.groupby(["judge", "axis"]):
+        vals = grp["delta"].dropna().values
+        n = len(vals)
+        if n < 5:
+            continue
+        mean, sd = float(np.mean(vals)), float(np.std(vals, ddof=1))
+        se = sd / np.sqrt(n)
+        dof = n - 1
+        t_lo = (mean + margin) / se  # H0: mean <= -margin
+        t_hi = (mean - margin) / se  # H0: mean >= +margin
+        tost_p = max(1 - stats.t.cdf(t_lo, dof), stats.t.cdf(t_hi, dof))
+        tcrit = stats.t.ppf(0.95, dof)
+        ci_lo, ci_hi = mean - tcrit * se, mean + tcrit * se
+        mde = (stats.t.ppf(0.975, dof) + stats.t.ppf(0.80, dof)) * se
+        recs.append({"judge": judge, "axis": axis, "n": n,
+                     "mean_delta": mean, "sd_delta": sd,
+                     "ci90_lo": float(ci_lo), "ci90_hi": float(ci_hi),
+                     "margin": margin, "tost_p": float(tost_p),
+                     "equiv_margin_min": float(max(abs(ci_lo), abs(ci_hi))),
+                     "mde_80": float(mde)})
+    return pd.DataFrame(recs)
 
 
 def mixedlm_by_axis(df: pd.DataFrame) -> pd.DataFrame:

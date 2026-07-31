@@ -1,0 +1,10 @@
+=== 2026-07-29T13:30:51Z ===
+Run 'results_v2': 30 PRs x 8 variants x 2 judges x 3 trials = 1440 cells (prompt v4.1) [BATCH]
+  [claude] done=0 collected_now=0 in_flight=720
+  [gpt] done=0 collected_now=0 in_flight=53 queued=667 (waiting for the in-flight chunk; re-run to advance)
+
+Batch advance: done=0/1440 collected_now=0 in_flight=773 needs_sync=0
+output: artifacts/runs/results_v2.jsonl
+state:  artifacts/runs/results_v2.batches.json
+
+Batches still in-flight — re-run this command later to collect.
