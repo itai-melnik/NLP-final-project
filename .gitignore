@@ -32,3 +32,31 @@ artifacts/runs/*smoke*.jsonl
 # transient duplicate of request bodies already in the provider's Batch API.
 artifacts/runs/*.batches.json
 artifacts/runs/*_batch_scratch/
+
+# Paper sources and presentation material — kept locally, not part of the
+# reviewed repo.
+paper/
+presentation/
+docs/paper-handoff.md
+artifacts/20_analysis_results*.md
+
+# Superseded v1 pipeline outputs (design superseded 2026-07-29, spec §8).
+# results_v1.jsonl stays tracked: the paper's v3 flip-rate pilot reads it.
+artifacts/variants_v1/
+artifacts/invariance_report_v1.json
+artifacts/spotcheck_v1.md
+
+# Run scratch: dry runs, one-off regression check, poll logs
+artifacts/runs/dry_run_*.jsonl
+artifacts/runs/v3_regression.jsonl
+artifacts/runs/*.poll.log
+artifacts/runs/*.poll.out
+
+# Matcher-iteration backups and figures not used in the paper (both
+# regenerable: scripts/03_match_issues.py and notebooks/20_analysis.ipynb)
+artifacts/*.bak
+artifacts/figures/flip_rate_heatmap.png
+artifacts/figures/judge_characterization.png
+
+# MS Office lock files
+~$*

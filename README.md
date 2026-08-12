@@ -12,15 +12,28 @@ Hard separation of **preprocessing / experiment / analysis** (spec §7):
 config/experiment.yaml   single source of truth (paths, seeds, filters, models, versions)
 src/prjudge/             ALL logic (importable package)
 scripts/                 thin CLI wrappers over the package
-  00_build_selection.py  Stage 0 -> artifacts/selection_manifest_v1.json
-  01_build_variants.py   Stage 1 -> artifacts/variants_v1/ + invariance_report_v1.json
+  00_build_selection.py  Stage 0 -> artifacts/selection_manifest_v2.json
+  01_build_variants.py   Stage 1 -> artifacts/variants_v2/ + invariance_report_v2.json
   02_run_judges.py       Stage 2 -> artifacts/runs/{run_name}.jsonl
+  03_match_issues.py     LLM issue-matcher pilot (abandoned; see paper §validity)
 notebooks/
   10_experiment_runner.ipynb  thin: configure / dry-run / launch / monitor Stage 2
   20_analysis.ipynb           Stage 3: all stats, figures, tables (never calls an API)
 artifacts/               frozen outputs, append-only, tracked in git
 swe-prbench/             READ-ONLY dataset (gitignored, never modified)
 ```
+
+Key frozen artifacts backing the paper:
+
+- `artifacts/runs/results_v2.jsonl` — the final 1,440-call battery; every
+  headline number and figure regenerates from this file via `20_analysis.ipynb`.
+- `artifacts/runs/results_v1.jsonl`, `pilot_prompt_v4.jsonl`,
+  `pilot_prompt_v4.1.jsonl` — prompt-stability pilots (the v3→v4→v4.1
+  flip-rate comparison).
+- `artifacts/variants_v2/`, `invariance_report_v2.json`, `spotcheck_v2.md` —
+  the frozen judge inputs plus their mechanical and manual invariance audits.
+- `artifacts/matching_pilot_*.jsonl`, `spotcheck_matching_pilot_*.md` — the
+  abandoned semantic issue-matcher pilot; no matcher output feeds the paper.
 
 **Convention:** notebooks for narrative, modules for logic. Stages 0–1 are
 scripts only (freeze discipline); Stage 2 is a package + a thin launcher
